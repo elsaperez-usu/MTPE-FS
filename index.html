@@ -131,6 +131,13 @@ footer a{color:var(--muted)}
 #logTable td textarea{min-height:52px}
 #logTable td.mt{background:#fffdf7;white-space:pre-wrap}
 #logTable td.ed{background:#eef8f1;white-space:pre-wrap}
+.align{max-height:340px;overflow:auto;border:1px solid var(--line);border-radius:6px;margin-top:10px}
+.align td{font-size:.85rem}
+.align td.n{color:var(--muted);width:40px}
+.align tr.bad td{background:#fff4e5}
+.badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:.85rem;font-weight:700}
+.badge.ok{background:#eaf6ee;color:var(--ok)} .badge.warn{background:#fff4e5;color:var(--major)}
+textarea.mono{font-size:.88rem;line-height:1.45;min-height:200px;white-space:pre;overflow-x:auto}
 @media (max-width:900px){.ws{grid-template-columns:1fr}.seglist{position:static;max-height:260px}.grid2,.grid3,.focus-list{grid-template-columns:1fr}}
 @media print{header,nav.steps,.no-print,footer{display:none}body{background:#fff}.card{border:0}}
 </style>
@@ -179,6 +186,40 @@ footer a{color:var(--muted)}
       <div><label>Post-editing level</label><div class="small muted" style="padding-top:6px">Set by your quality score. If the DeepL output scores <b>below 90</b>, you complete <b>full post-editing</b> and a change log (Step 3).</div></div>
     </div>
     <div class="notice info small" id="fsInfo" style="margin-top:14px"></div>
+    <div class="row hidden" id="customActions" style="margin-top:8px"><span class="small muted">Added on this device.</span><span class="spacer"></span><button class="btn small sec" id="editCustomBtn">Edit segments</button><button class="btn small ghost" id="delCustomBtn">Remove from this device</button></div>
+    <p class="small muted" style="margin:8px 0 0">Working on more than one fact sheet? Choose it here. Each fact sheet keeps its own draft on this device and is submitted separately. To switch, come back to Start and pick another.</p>
+  </div>
+
+  <div class="card hidden" id="customCard">
+    <h2 id="customTitle">Add a new fact sheet</h2>
+    <p class="small muted">Type the fact sheet name, then paste the English original and the DeepL Spanish. The tool splits both into segments. Check that each English line sits next to its Spanish line before you start.</p>
+    <div class="grid2">
+      <div><label for="cfTitle">Fact sheet name</label><input type="text" id="cfTitle" placeholder="e.g., Controlling Aphids in Home Gardens"></div>
+      <div><label for="cfId">Fact sheet number or code <small>(optional)</small></label><input type="text" id="cfId" placeholder="e.g., 2023-05pr" maxlength="40"></div>
+      <div><label for="cfAuthors">Authors <small>(optional)</small></label><input type="text" id="cfAuthors"></div>
+      <div><label for="cfEngine">Machine translation engine</label><select id="cfEngine"><option>DeepL</option><option>Google Translate</option><option>ChatGPT</option><option>Microsoft Translator</option><option>Other</option></select></div>
+    </div>
+    <div class="grid2" style="margin-top:12px">
+      <div><label for="cfEn">English original <small>(copy from the PDF or Word file)</small></label><textarea id="cfEn" class="mono" spellcheck="false"></textarea></div>
+      <div><label for="cfEs">DeepL Spanish <small>(copy from the Word file)</small></label><textarea id="cfEs" class="mono" lang="es" spellcheck="false"></textarea></div>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <label class="small" style="margin:0;font-weight:500">Split into:
+        <select id="cfMode" style="width:auto;display:inline-block;margin-left:4px"><option value="sent">Sentences (recommended)</option><option value="para">Paragraphs / lines</option></select></label>
+      <button class="btn small" id="cfSplitBtn">Split into segments</button>
+      <span id="cfCount"></span>
+    </div>
+    <div id="cfAlignWrap" class="hidden">
+      <p class="small" style="margin:12px 0 4px"><b>Check the alignment.</b> Each line below is one segment. Edit the lines so English line 5 matches Spanish line 5, and so on: press Enter to split a segment, or delete a line break to join two. Rows highlighted in orange have a missing partner.</p>
+      <div class="grid2">
+        <div><label class="small">English: one segment per line</label><textarea id="cfEnLines" class="mono" spellcheck="false"></textarea></div>
+        <div><label class="small">Spanish: one segment per line</label><textarea id="cfEsLines" class="mono" lang="es" spellcheck="false"></textarea></div>
+      </div>
+      <div class="align"><table id="cfPreview"></table></div>
+    </div>
+    <div style="margin-top:12px"><label for="cfAi">ChatGPT review <small>(optional: paste it if your instructor gave you one)</small></label><textarea id="cfAi" style="min-height:90px"></textarea></div>
+    <div class="row" style="margin-top:12px"><span class="small" id="cfMsg"></span><span class="spacer"></span>
+      <button class="btn sec hidden" id="cfCancelBtn">Cancel</button><button class="btn" id="cfSaveBtn">Save fact sheet</button></div>
   </div>
 
   <div class="card">
@@ -298,6 +339,7 @@ footer a{color:var(--muted)}
     <div class="notice info small" id="aiProgress"></div>
   </div>
   <div id="aiItems"></div>
+  <div id="aiCustom" class="hidden"></div>
   <div class="row"><button class="btn sec" data-go="2">← Back</button><span class="spacer"></span><button class="btn" data-go="4">Continue →</button></div>
 </section>
 
@@ -373,6 +415,8 @@ footer a{color:var(--muted)}
   MTPE &amp; QA Review Tool © 2026 by Elsa Pérez, PhD · Center for Translation and Interpretation Studies, Utah State University · licensed under <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a>
 </footer>
 
+<script>const FACTSHEETS = [];</script>
+<script src="factsheets.js"></script>
 <script>
 /* ==================== INSTRUCTOR SETTINGS ==================== */
 const CONFIG = {
@@ -381,112 +425,6 @@ const CONFIG = {
   WEIGHTS: { Critical:25, Major:5, Minor:1, Preferential:0, Source:0 },
   FULL_PE_THRESHOLD: 90                              // score below this → full post-editing + change log required
 };
-const FACTSHEETS = [];
-/* ============================================================
-   FACT SHEET DATA — one object per fact sheet.
-   To add a fact sheet, copy this object, change id/title, and
-   replace segments [section, English source, DeepL Spanish]
-   and aiReview items. Segment numbers are assigned automatically.
-   ============================================================ */
-FACTSHEETS.push({
-  id: "FS-01",
-  title: "Three Options for Mixing and Loading Spray Tanks",
-  authors: "Kalen Taylor, Cody Zesiger, Corey Ransom, Earl Creech, and Matt Yost",
-  published: "USU Extension · August 2022",
-  mtEngine: "DeepL",
-  targetLocale: "es-ES (DeepL output)",
-  segments: [
-    ["Title", "Three Options for Mixing and Loading Spray Tanks", "Tres opciones para mezclar y llenar los depósitos de pulverización"],
-    ["Title", "Kalen Taylor, Cody Zesiger, Corey Ransom, Earl Creech, and Matt Yost", "Kalen Taylor, Cody Zesiger, Corey Ransom, Earl Creech y Matt Yost"],
-    ["Introduction", "Introduction", "Introducción"],
-    ["Introduction", "Preparing a pesticide solution is sometimes confusing or intimidating.", "La preparación de una solución de plaguicida puede resultar a veces confusa o intimidante."],
-    ["Introduction", "The instructions for preparing the mixture in the spray tank are not always straight forward and the language is not always standardized.", "Las instrucciones para preparar la mezcla en el depósito de pulverización no siempre son claras y la terminología no siempre está estandarizada."],
-    ["Introduction", "However, the mixture must be prepared correctly for effective application, compliance, and safety.", "Sin embargo, la mezcla debe prepararse correctamente para garantizar una aplicación eficaz, el cumplimiento de la normativa y la seguridad."],
-    ["Introduction", "Making the effort to properly mix chemicals can save money and headaches in the long run.", "Esforzarse por mezclar adecuadamente los productos químicos puede ahorrar dinero y evitar problemas a largo plazo."],
-    ["Introduction", "This fact sheet provides simple guidelines for correctly and safely mixing and loading spray solutions.", "Esta ficha informativa ofrece pautas sencillas para mezclar y cargar soluciones de pulverización de forma correcta y segura."],
-    ["Safety Considerations", "Safety Considerations", "Consideraciones de seguridad"],
-    ["Safety Considerations", "Although pesticides can be highly effective, there can also be risk involved when using them.", "Aunque los plaguicidas pueden ser muy eficaces, su uso también puede conllevar riesgos."],
-    ["Safety Considerations", "This risk is highest during mixing when direct contact to concentrated product is most likely (MacFarlane et al., 2013).", "Este riesgo es mayor durante la mezcla, cuando es más probable el contacto directo con el producto concentrado (MacFarlane et al., 2013)."],
-    ["Safety Considerations", "When mixing in large tanks, like the 300-gallon tank on a spray truck pictured in Figure 1, start the sprayer engine to agitate the solution during mixing.", "Cuando se mezcle en depósitos grandes, como el depósito de 300 galones de un camión pulverizador que se muestra en la figura 1, se debe arrancar el motor del pulverizador para agitar la solución durante la mezcla."],
-    ["Safety Considerations", "This will help achieve an even mix while avoiding settling which can cause uneven application.", "Esto ayudará a conseguir una mezcla homogénea y evitará la sedimentación, que puede provocar una aplicación desigual."],
-    ["Safety Considerations", "Of utmost importance is following the product label while handling and mixing pesticides (Figure 2).", "Es de suma importancia seguir las instrucciones de la etiqueta del producto al manipular y mezclar plaguicidas (Figura 2)."],
-    ["Safety Considerations", "Nearly 97% of accidental human pesticide exposure comes through skin contact (Fishel, 2000).", "Casi el 97 % de la exposición accidental de las personas a los plaguicidas se produce por contacto con la piel (Fishel, 2000)."],
-    ["Safety Considerations", "The exposure risk can be minimized by using the required personal protective equipment (PPE) for the chemicals being mixed (Yarpuz-Bozdogan, 2018).", "El riesgo de exposición puede minimizarse utilizando el equipo de protección individual (EPI) requerido para los productos químicos que se estén mezclando (Yarpuz-Bozdogan, 2018)."],
-    ["Safety Considerations", "Always mix with adequate ventilation to prevent respiratory exposure to chemicals.", "Mezcle siempre con ventilación adecuada para evitar problemas respiratorios\n[Figura 1. Camión pulverizador para mezclar y aplicar plaguicidas en grandes superficies]\na sustancias químicas."],
-    ["Safety Considerations", "Triple rinse any container that is used to measure chemical products.", "Enjuague tres veces cualquier recipiente que se utilice para medir productos químicos."],
-    ["Safety Considerations", "When a bottle or jug is empty, dispose of it according to the product label.", "Cuando una botella o un bidón esté vacío, deséchelo según las instrucciones de la etiqueta del producto."],
-    ["Safety Considerations", "Typically, this includes rinsing and cutting a hole in the bottom to prevent re-use.", "Por lo general, esto incluye enjuagarlo y hacer un agujero en el fondo para evitar su reutilización."],
-    ["Figures", "Figure 1. Spray Truck for Mixing and Applying Pesticides Over Large Areas", "Figura 1. Camión pulverizador para mezclar y aplicar plaguicidas en grandes superficies"],
-    ["Figures", "Figure 2. Carefully Measure All Products in Approved Containers", "Figura 2. Mida cuidadosamente todos los productos en recipientes homologados"],
-    ["Three Options", "Following are three options for safely mixing and loading spray tanks.", "A continuación se presentan tres opciones para mezclar y cargar de forma segura los depósitos de pulverización."],
-    ["Option 1", "Option 1: Mixing for a Full Tank", "Opción 1: Mezcla para un depósito lleno"],
-    ["Option 1", "1. Finding the number of acres treated per tank can be calculated by dividing the tank capacity by the application rate.", "El número de acres tratados por depósito se puede calcular dividiendo la capacidad del depósito por la dosis de aplicación."],
-    ["Option 1", "Example: 30-gallon tank divided by 15 gallons/acre (application rate) = 2 acres", "Ejemplo: depósito de 30 galones dividido entre 15 galones/acre (dosis de aplicación) = 2 acres"],
-    ["Option 1", "2. To calculate the amount of chemical product you should add per tank, multiply the number of acres treated per tank by the amount of chemical product listed on the label in units of product per acre.", "Para calcular la cantidad de producto químico que debe añadir por depósito, multiplique el número de acres tratados por depósito por la cantidad de producto químico indicada en la etiqueta en unidades de producto por acre."],
-    ["Option 1", "Example: 2 acres x 2 quarts/acre = 4 quarts of product added to the tank", "Ejemplo: 2 acres × 2 cuartos de galón por acre = 4 cuartos de galón de producto añadidos al depósito"],
-    ["Option 1", "3. Add the calculated amount of product and water needed to fill the tank.", "Añada la cantidad calculada de producto y el agua necesaria para llenar el depósito."],
-    ["Option 1", "Example: 4 quarts (1 gallon) of product and 29 gallons of water for 30 gallons", "Ejemplo: 4 cuartos de galón (1 galón) de producto y 29 galones de agua para 30 galones"],
-    ["Option 2", "Option 2: Mixing by the Gallon", "Opción 2: Mezcla por galón"],
-    ["Option 2", "1. Calculate the amount of product per gallon by dividing the labeled product rate per acre (ounces, quarts, or pounds per acre) by the application rate (gallon per acre).", "Calcule la cantidad de producto por galón dividiendo la dosis indicada en la etiqueta por acre (onzas, cuartos de galón o libras por acre) entre la dosis de aplicación (galones por acre)."],
-    ["Option 2", "Example: 32 ounces (1 quart)/30 = 1.07 ounces of product per gallon", "Ejemplo: 32 onzas (1 cuarto de galón)/30 = 1,07 onzas de producto por galón"],
-    ["Option 2", "2. Multiply product per gallon by gallons of solution to be used.", "Multiplique la cantidad de producto por galón por los galones de solución que se vayan a utilizar."],
-    ["Option 2", "Example: 1.07 ounces x 2.5 gallons = 2.7 ounces", "Ejemplo: 1,07 onzas × 2,5 galones = 2,7 onzas"],
-    ["Option 3", "Option 3: Mix for a Percent (%) of Product", "Opción 3: Mezcla para obtener un porcentaje (%) de producto"],
-    ["Option 3", "1. Write down the desired solution percentage found on the label as a decimal.", "Anote el porcentaje de solución deseado que figura en la etiqueta en forma de decimal."],
-    ["Option 3", "Example: 2.0% = 0.02 in decimal form", "Ejemplo: 2,0 % = 0,02 en forma decimal"],
-    ["Option 3", "2. Multiply 128 ounces by the desired solution decimal number.", "Multiplica 128 onzas por el número decimal de la solución deseada."],
-    ["Option 3", "Example: 128 ounces x 0.02 = 2.6 ounces per gallon mix", "Ejemplo: 128 onzas × 0,02 = 2,6 onzas por galón de mezcla"],
-    ["Option 3", "3. Multiply ounces by desired gallons to be used in the tank.", "Multiplica las onzas por el número de galones que desees utilizar en el depósito."],
-    ["Option 3", "Example: 2.6 ounces x 25 gallon = 65 ounces product per 25-gallon tank load", "Ejemplo: 2,6 onzas × 25 galones = 65 onzas de producto por cada carga de 25 galones del depósito"],
-    ["Conclusion", "Conclusion", "Conclusión"],
-    ["Conclusion", "Whether preparing a large tank or a small tank, the same guidelines and safety considerations apply to mixing pesticides.", "Tanto si se prepara un depósito grande como uno pequeño, se aplican las mismas directrices y consideraciones de seguridad a la hora de mezclar plaguicidas."],
-    ["Conclusion", "When it is time to mix, first determine the tank size and rate of the product or products being mixed.", "A la hora de realizar la mezcla, determine primero el tamaño del depósito y la dosis del producto o productos que se van a mezclar."],
-    ["Conclusion", "Once you obtain those two numbers, any of the three options presented above will work to achieve the correct ratio of chemical to water.", "Una vez que obtenga esas dos cifras, cualquiera de las tres opciones presentadas anteriormente servirá para lograr la proporción correcta de producto químico y agua."],
-    ["Conclusion", "Although this fact sheet provides guidelines for tank-mixing calculations, anyone mixing pesticides should always read and follow the label.", "Aunque esta ficha informativa proporciona directrices para los cálculos de mezclas en depósito, cualquier persona que mezcle plaguicidas debe leer y seguir siempre las instrucciones de la etiqueta."],
-    ["References", "References", "Referencias"],
-    ["References", "Fishel, F. (2000). Personal protective equipment for working with pesticides [Fact sheet, Publication G1917]. University of Missouri. https://extension.missouri.edu/publications/g1917.", "Fishel, F. (2000). Equipo de protección individual para trabajar con plaguicidas [Ficha técnica, Publicación G1917]. Universidad de Missouri. https://extension.missouri.edu/publications/g1917."],
-    ["References", "MacFarlane, E., Carey, R., Keegel, T., El-Zaemay, S., & Fritschi, L. (2013). Dermal exposure associated with occupational end use of pesticides and the role of protective measures. Safety and Health at Work, 4(3), 136–141.", "MacFarlane, E., Carey, R., Keegel, T., El-Zaemay, S. y Fritschi, L. (2013). Exposición cutánea asociada al uso final profesional de plaguicidas y el papel de las medidas de protección. Safety and Health at Work, 4(3), 136-141."],
-    ["References", "Yarpuz-Bozdogan, N. (2018). The importance of personal protective equipment in pesticide applications in agriculture. Current Opinion in Environmental Science & Health, 4, 1–4.", "Yarpuz-Bozdogan, N. (2018). La importancia del equipo de protección individual en la aplicación de plaguicidas en la agricultura. Current Opinion in Environmental Science & Health, 4, 1–4."],
-    ["Back matter", "Utah State University is an affirmative action/equal opportunity institution and is committed to a learning and working environment free from discrimination, including harassment. For USU’s non-discrimination notice, see equity.usu.edu/non-discrimination.", "La Universidad Estatal de Utah es una institución que aplica políticas de acción afirmativa e igualdad de oportunidades y está comprometida con un entorno de aprendizaje y de trabajo libre de discriminación, incluido el acoso. Para consultar la declaración de no discriminación de la USU, visite equity.usu.edu/non-discrimination."],
-    ["Back matter", "Published August 2022 · Utah State University · Peer-reviewed fact sheet", "Publicado en agosto de 2022. Universidad Estatal de Utah. Ficha informativa revisada por pares."]
-  ],
-  /* ChatGPT review items. "seg" = segment numbers the item refers to (1-based). */
-  aiReview: [
-    { seg:[17], group:"Meaning and calculation", title:"Repair the exposure sentence",
-      current:"“problemas respiratorios a sustancias químicas.”",
-      suggestion:"Realice la mezcla y la carga en un lugar bien ventilado para evitar la exposición por inhalación a los productos químicos.",
-      why:"The current sentence does not express a complete relationship. Keep protective equipment and label requirements in the same context." },
-    { seg:[32,33], group:"Meaning and calculation", title:"Show units in Option 2",
-      current:"32 ounces per acre divided by 30, with units unclear.",
-      suggestion:"32 fl oz/acre ÷ 30 gal/acre = 1,0667 fl oz de producto por galón de mezcla.",
-      why:"The acre units cancel; the result is product per gallon of final spray mixture. Preserve ounce or pound measurement bases specified by the label rather than treating weight ounces as liquid ounces." },
-    { seg:[40,42], group:"Meaning and calculation", title:"Correct premature rounding in Option 3",
-      current:"128 × 0.02 = 2.6; 2.6 × 25 = 65 ounces.",
-      suggestion:"128 × 0,02 = 2,56 fl oz/gal; 2,56 × 25 = 64 fl oz. Redondee al final.",
-      why:"The source also gives 65 because it rounds early. This is a source arithmetic issue. The exact result for the stated volume percentage and 25 U.S. gallons is 64 fl oz." },
-    { seg:[29,30,41,42], group:"Meaning and calculation", title:"Make final tank volume explicit",
-      current:"Instructions can be read as adding the full water volume plus product.",
-      suggestion:"Prepare 25 galones estadounidenses de mezcla final, incluido el volumen del producto.",
-      why:"A final concentration calculation assumes a final mixture volume. Do not imply adding 25 gallons of water and then extra product. Apply the same clarity to the 30 gallon example." },
-    { seg:[37,38], group:"Clarity and editorial", title:"Define the percentage basis",
-      current:"A 2% mixture is discussed without a full basis explanation.",
-      suggestion:"Para este ejemplo, 2 % significa 2 partes de producto por cada 100 partes de mezcla final, medidas por volumen.",
-      why:"Ask the author to confirm this volume-by-volume assumption. Percent active ingredient and percent by mass are different calculations." },
-    { seg:[46], group:"Clarity and editorial", title:"Explain when to use each approach",
-      current:"Three options are presented together.",
-      suggestion:"Seleccione el cálculo que corresponda a la dosis o concentración indicada en la etiqueta y a la tasa de aplicación calibrada.",
-      why:"Do not imply that all options are interchangeable for every product. Retain the source’s direction to calibrate the sprayer before mixing." },
-    { seg:[39,41,1,16], group:"Clarity and editorial", title:"Standardize reader address and vocabulary",
-      current:"“Multiplica” alongside “Calcule”; tanques and depósitos; EPI.",
-      suggestion:"Multiplique; calcule. Use tanque de pulverización consistently and define equipo de protección personal.",
-      why:"EPI is valid Spanish; EPP may suit a Latin American audience. This is an audience choice. Avoid changing product names or approved label wording." },
-    { seg:[35,49,50,51,52], group:"Clarity and editorial", title:"Verify examples and production details",
-      current:"The 1.07 × 2.5 result is approximately 2.7; other numbers contain inserted spaces.",
-      suggestion:"Retain sufficient intermediate precision and round final measurement appropriately.",
-      why:"Check all rates, totals, final volume labels, decimal separators, figure references, and units. Preserve original English reference titles for retrieval, optionally followed by Spanish translations. Use approved USU Spanish institutional wording for the closing notice." }
-  ]
-});
-
 
 const CATS = {
   'Accuracy': ['Mistranslation','Omission','Addition','Numbers, units & calculations','Untranslated text'],
@@ -537,7 +475,7 @@ function freshState(){
     noMat: false,
     time: TIME_ACTS.map(() => ({ min:'', note:'' })),
     a: {}, nextId: 1, submitted: false,
-    fullPe: '', log: {}, extraLog: []
+    fullPe: '', log: {}, extraLog: [], aiCustom: []
   };
 }
 function save(){
@@ -545,6 +483,8 @@ function save(){
   collectForms();
   store(storeKey(), JSON.stringify({ S, student: studentInfo() }));
   const n = $('savedNote'); if(n){ n.textContent = 'Draft saved on this device'; }
+  if(!$('step0').classList.contains('hidden')) return;
+  fillFsMenu();
 }
 function load(){
   const raw = store(storeKey());
@@ -558,8 +498,18 @@ function studentInfo(){
 /* ==================== INIT ==================== */
 function init(){
   const sel = $('fsSel');
-  FACTSHEETS.forEach((f,i) => { const o = document.createElement('option'); o.value = i; o.textContent = f.id + ' — ' + f.title; sel.appendChild(o); });
-  sel.addEventListener('change', () => pickFS(+sel.value));
+  loadCustomFS();
+  if(!FACTSHEETS.length && false){ document.querySelector('main').innerHTML = '<div class="card"><h1>No fact sheets loaded</h1><p>The file <b>factsheets.js</b> is missing or has an error. Upload it to the same folder as this page.</p></div>'; return; }
+  fillFsMenu();
+  sel.addEventListener('change', () => { save(); if(sel.value === 'new'){ openCustom(null); } else { pickFS(+sel.value); } });
+  $('cfSplitBtn').addEventListener('click', splitCustom);
+  $('cfEnLines').addEventListener('input', previewAlign);
+  $('cfEsLines').addEventListener('input', previewAlign);
+  $('cfSaveBtn').addEventListener('click', saveCustom);
+  $('cfCancelBtn').addEventListener('click', () => { $('customCard').classList.add('hidden'); fillFsMenu(); $('fsSel').value = String(FACTSHEETS.indexOf(FS)); });
+  $('editCustomBtn').addEventListener('click', () => openCustom(FS));
+  $('delCustomBtn').addEventListener('click', delCustom);
+  if(!FACTSHEETS.length){ fillFsMenu(); openCustom(null); return; }
   pickFS(0);
   renderRubric();
 
@@ -596,15 +546,31 @@ function init(){
 }
 function confirmReset(){ return window.confirm ? true : true; }
 
+function fsStatus(f){
+  try { const r = JSON.parse(localStorage.getItem('ctis-mtpe-' + f.id) || 'null'); if(!r || !r.S) return ''; return r.S.submitted ? ' ✓ submitted' : ' · draft in progress'; } catch(e){ return ''; }
+}
+function fillFsMenu(){
+  const sel = $('fsSel'), v = sel.value;
+  sel.innerHTML = FACTSHEETS.map((f,i) => `<option value="${i}">${f.custom ? esc(f.title) + (f.code ? ' (' + esc(f.code) + ')' : '') : esc(f.id) + ' — ' + esc(f.title)}${fsStatus(f)}</option>`).join('') + '<option value="new">➕ Add a new fact sheet…</option>';
+  if(v) sel.value = v;
+}
 function pickFS(i){
   FS = FACTSHEETS[i];
+  if(!FS) return;
+  $('fsSel').value = String(i);
+  $('customCard').classList.add('hidden');
+  $('customActions').classList.toggle('hidden', !FS.custom);
+  $('startBtn').disabled = false;
+  cur = 0; editingErr = null;
   const words = FS.segments.reduce((n,s) => n + countWords(s[1]), 0);
-  $('fsInfo').innerHTML = `<b>${esc(FS.title)}</b><br>${esc(FS.authors)} · ${esc(FS.published)}<br>${FS.segments.length} segments · ${words} source words · MT: ${esc(FS.mtEngine)}, ${esc(FS.targetLocale)}`;
-  $('hdrMeta').innerHTML = esc(FS.id) + ' · ' + esc(FS.title) + '<br>Elsa Pérez, PhD · CTIS';
+  $('fsInfo').classList.remove('hidden');
+  $('fsInfo').innerHTML = `<b>${esc(FS.title)}</b><br>${esc(FS.authors || 'Authors not listed')} · ${esc(FS.published)}<br>${FS.segments.length} segments · ${words} source words · MT: ${esc(FS.mtEngine)}${FS.code ? ' · Code: ' + esc(FS.code) : ''}`;
+  $('hdrMeta').innerHTML = esc(FS.custom ? (FS.code || 'Student-added') : FS.id) + ' · ' + esc(FS.title) + '<br>Elsa Pérez, PhD · CTIS';
   const saved = load();
   if(saved && saved.S){
     S = saved.S;
     if(S.fullPe === undefined){ S.fullPe = ''; S.log = {}; S.extraLog = []; }
+    if(!S.aiCustom) S.aiCustom = [];
     const st = saved.student || {};
     if(st.name) $('stName').value = st.name; if(st.id) $('stId').value = st.id;
     if(st.email) $('stEmail').value = st.email; if(st.course) $('stCourse').value = st.course;
@@ -616,6 +582,141 @@ function pickFS(i){
     $('resumeNote').classList.add('hidden');
     $('startBtn').textContent = 'Start review';
   }
+  $('startBtn').textContent += ' — ' + (FS.custom ? FS.title.slice(0,30) : FS.id);
+}
+
+/* ==================== STUDENT-ADDED FACT SHEETS ==================== */
+const CUSTOM_KEY = 'ctis-mtpe-custom-factsheets';
+function loadCustomFS(){
+  let list = [];
+  try { list = JSON.parse(localStorage.getItem(CUSTOM_KEY) || '[]'); } catch(e){ list = []; }
+  list.forEach(f => { if(!FACTSHEETS.some(x => x.id === f.id)) FACTSHEETS.push(f); });
+}
+function storeCustomFS(){
+  try { localStorage.setItem(CUSTOM_KEY, JSON.stringify(FACTSHEETS.filter(f => f.custom))); return true; } catch(e){ return false; }
+}
+let editingCustom = null;
+function openCustom(f){
+  editingCustom = f;
+  $('customCard').classList.remove('hidden');
+  $('customActions').classList.add('hidden');
+  $('fsInfo').classList.add('hidden');
+  $('startBtn').disabled = true;
+  $('customTitle').textContent = f ? 'Edit fact sheet' : 'Add a new fact sheet';
+  $('cfCancelBtn').classList.toggle('hidden', !FACTSHEETS.some(x => !x.custom) && !f);
+  $('cfTitle').value = f ? f.title : ''; $('cfId').value = f ? (f.code || '') : '';
+  $('cfAuthors').value = f ? (f.authors || '') : ''; $('cfEngine').value = f ? f.mtEngine : 'DeepL';
+  $('cfAi').value = f ? (f.aiText || '') : '';
+  $('cfEn').value = ''; $('cfEs').value = '';
+  if(f){
+    $('cfEnLines').value = f.segments.map(s => s[1]).join('\n');
+    $('cfEsLines').value = f.segments.map(s => s[2].replace(/\n/g,' ')).join('\n');
+    $('cfAlignWrap').classList.remove('hidden'); previewAlign();
+  } else { $('cfAlignWrap').classList.add('hidden'); $('cfCount').innerHTML = ''; }
+  $('cfMsg').textContent = '';
+  $('customCard').scrollIntoView({behavior:'smooth', block:'start'});
+}
+/* join lines broken by PDF copy, keep headings and blank-line paragraphs */
+function toParagraphs(text){
+  const lines = String(text).replace(/\r/g,'').split('\n').map(l => l.replace(/\s+/g,' ').trim()).filter(l => !/^\d{1,3}$/.test(l));
+  const JOINERS = ['and','or','the','of','to','a','an','in','for','with','by','on','at','from','as','that','is','are','be','y','o','e','u','de','del','la','el','los','las','en','por','para','con','un','una','que','a','al','se'];
+  const paras = []; let buf = '';
+  for(let i=0;i<lines.length;i++){
+    const l = lines[i];
+    if(!l){ if(buf){ paras.push(buf); buf=''; } continue; }
+    if(!buf){ buf = l; continue; }
+    const last = buf.split(' ').pop().toLowerCase();
+    const brokenLine = /[-,]$/.test(buf) || JOINERS.indexOf(last) !== -1 || (/^[a-záéíóúñü(]/.test(l) && !/[.!?:;]$/.test(buf));
+    if(brokenLine) buf += (buf.endsWith('-') ? '' : ' ') + l;
+    else { paras.push(buf); buf = l; }
+  }
+  if(buf) paras.push(buf);
+  return paras;
+}
+const ABBR = ['al','e.g','i.e','etc','fig','figs','no','nos','dr','mr','mrs','ms','vs','approx','u.s','ee.uu','ud','uds','sr','sra','pág','p','pp','vol','ed','eds','núm'];
+function toSentences(p){
+  const out = []; let start = 0;
+  for(let i=0;i<p.length;i++){
+    const c = p[i];
+    if(c !== '.' && c !== '!' && c !== '?') continue;
+    let j = i + 1;
+    while(j < p.length && /[”"’)\]]/.test(p[j])) j++;
+    if(j >= p.length || p[j] !== ' ') continue;
+    let k = j; while(k < p.length && p[k] === ' ') k++;
+    if(k >= p.length || !/[A-ZÁÉÍÓÚÑ¿¡“"(0-9]/.test(p[k])) continue;
+    if(c === '.'){
+      const before = p.slice(start, i).split(' ').pop().toLowerCase();
+      const soFar = p.slice(start, i).trim();
+      if(ABBR.indexOf(before) !== -1 || /^[a-z]$/i.test(before) || /^\d+$/.test(before) && /^\d/.test(p[k])) continue;
+      if(/^(\d{1,2}|[a-z]|(figure|figura|fig|table|tabla|step|paso|option|opción)\.? ?\d+)$/i.test(soFar)) continue;
+      if(/^\(\d{4}[a-z]?\)$/.test(before)) continue;
+    }
+    out.push(p.slice(start, j).trim()); start = k; i = k - 1;
+  }
+  const rest = p.slice(start).trim(); if(rest) out.push(rest);
+  return out;
+}
+function segmentText(text, mode){
+  const paras = toParagraphs(text);
+  return mode === 'para' ? paras : paras.reduce((a,p) => a.concat(toSentences(p)), []);
+}
+function splitCustom(){
+  const mode = $('cfMode').value;
+  const en = segmentText($('cfEn').value, mode), es = segmentText($('cfEs').value, mode);
+  if(!en.length || !es.length){ $('cfMsg').innerHTML = '<span style="color:var(--crit)">Paste both the English and the Spanish first.</span>'; return; }
+  $('cfEnLines').value = en.join('\n'); $('cfEsLines').value = es.join('\n');
+  $('cfAlignWrap').classList.remove('hidden'); $('cfMsg').textContent = '';
+  previewAlign();
+}
+function alignedLines(){
+  const en = $('cfEnLines').value.split('\n').map(s => s.trim());
+  const es = $('cfEsLines').value.split('\n').map(s => s.trim());
+  while(en.length && !en[en.length-1]) en.pop();
+  while(es.length && !es[es.length-1]) es.pop();
+  return {en, es};
+}
+function previewAlign(){
+  const {en, es} = alignedLines(), n = Math.max(en.length, es.length);
+  let h = '<tr><th>#</th><th>English</th><th>Spanish</th></tr>';
+  for(let i=0;i<n;i++){ const bad = !en[i] || !es[i]; h += `<tr class="${bad?'bad':''}"><td class="n">${i+1}</td><td>${esc(en[i]||'—')}</td><td lang="es">${esc(es[i]||'—')}</td></tr>`; }
+  $('cfPreview').innerHTML = h;
+  const same = en.length === es.length && en.every((x,i) => x && es[i]);
+  $('cfCount').innerHTML = `<span class="badge ${same?'ok':'warn'}">English ${en.length} · Spanish ${es.length}${same ? ' · aligned' : ' · check alignment'}</span>`;
+}
+function slug(s){ return String(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().replace(/[^A-Z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,24); }
+function saveCustom(){
+  const title = $('cfTitle').value.trim();
+  const {en, es} = alignedLines();
+  if(!title){ $('cfMsg').innerHTML = '<span style="color:var(--crit)">Type the fact sheet name.</span>'; return; }
+  if(!en.length || !es.length){ $('cfMsg').innerHTML = '<span style="color:var(--crit)">Paste the texts and click “Split into segments”.</span>'; return; }
+  const n = Math.max(en.length, es.length);
+  if(en.length !== es.length && !$('cfMsg').dataset.warned){
+    $('cfMsg').dataset.warned = '1';
+    $('cfMsg').innerHTML = `<span style="color:var(--major)">English has ${en.length} lines and Spanish has ${es.length}. Fix the alignment, or click Save again to keep it as is.</span>`; return;
+  }
+  delete $('cfMsg').dataset.warned;
+  const segs = [];
+  for(let i=0;i<n;i++) segs.push([title.slice(0,40), en[i] || '', es[i] || '']);
+  const code = $('cfId').value.trim();
+  const f = editingCustom || { id: 'S-' + (slug(code || title) || 'FS') + '-' + Date.now().toString(36).toUpperCase(), custom: true };
+  Object.assign(f, { title, code, authors: $('cfAuthors').value.trim(), published: 'Added by student', mtEngine: $('cfEngine').value, targetLocale: 'Spanish', segments: segs, aiReview: [], aiText: $('cfAi').value.trim() });
+  if(editingCustom){
+    try { const raw = JSON.parse(localStorage.getItem('ctis-mtpe-' + f.id) || 'null'); if(raw && raw.S && raw.S.segs.length !== segs.length){ localStorage.removeItem('ctis-mtpe-' + f.id); } } catch(e){}
+  } else FACTSHEETS.push(f);
+  if(!storeCustomFS()) $('cfMsg').textContent = 'Note: this browser could not save the fact sheet for next time.';
+  editingCustom = null;
+  fillFsMenu();
+  pickFS(FACTSHEETS.indexOf(f));
+}
+function delCustom(){
+  if(!FS || !FS.custom) return;
+  const btn = $('delCustomBtn');
+  if(!btn.dataset.confirm){ btn.dataset.confirm = '1'; btn.textContent = 'Click again to remove (drafts for it will be deleted)'; setTimeout(() => { delete btn.dataset.confirm; btn.textContent = 'Remove from this device'; }, 4000); return; }
+  delete btn.dataset.confirm; btn.textContent = 'Remove from this device';
+  try { localStorage.removeItem('ctis-mtpe-' + FS.id); } catch(e){}
+  FACTSHEETS.splice(FACTSHEETS.indexOf(FS), 1);
+  storeCustomFS(); fillFsMenu();
+  if(FACTSHEETS.length) pickFS(0); else openCustom(null);
 }
 
 function renderRubric(){
@@ -891,6 +992,9 @@ function changeLog(){
 
 /* ==================== AI REVIEW ==================== */
 function renderAI(){
+  $('aiCustom').classList.toggle('hidden', !FS.custom);
+  if(FS.custom){ $('aiItems').innerHTML = ''; renderAICustom(); return; }
+  if(!FS.aiReview.length){ $('aiProgress').textContent = 'There is no ChatGPT review for this fact sheet. Continue to the next step.'; $('aiItems').innerHTML = ''; return; }
   const done = S.ai.filter(a => a.decision).length;
   $('aiProgress').textContent = `${done} of ${FS.aiReview.length} items evaluated.`;
   $('aiItems').innerHTML = FS.aiReview.map((a,k) => {
@@ -912,6 +1016,23 @@ function renderAI(){
     const k = +r.name.slice(2); collectForms(); S.ai[k].decision = r.value; save(); renderAI();
   }));
   $('aiItems').querySelectorAll('[data-jump]').forEach(a => a.addEventListener('click', ev => { ev.preventDefault(); cur = +a.dataset.jump - 1; go(1); }));
+}
+
+function renderAICustom(){
+  const rows = S.aiCustom;
+  $('aiProgress').textContent = FS.aiText ? `Read the ChatGPT review and add one row per suggestion it makes (${rows.length} added, ${rows.filter(r => r.decision).length} decided).` : 'No ChatGPT review was pasted for this fact sheet. You can skip this step, or go back to Start → Edit segments to paste one.';
+  const dec = ['','Accept','Modify','Reject','Partly applies'];
+  $('aiCustom').innerHTML = (FS.aiText ? `<div class="card"><h3>ChatGPT review (reference)</h3><div class="pane src" style="max-height:320px;overflow:auto">${esc(FS.aiText)}</div></div>` : '') +
+    `<div class="card"><h3>Your evaluation of each AI suggestion</h3><table><thead><tr><th style="width:24%">AI suggestion <small class="muted">(summarize)</small></th><th style="width:8%">Segment(s)</th><th style="width:13%">Decision</th><th>Your reasoning</th><th style="width:22%">Your version (if modified)</th><th></th></tr></thead><tbody>` +
+    (rows.length ? rows.map((r,k) => `<tr><td><textarea data-aic="${k}" data-f="title" style="min-height:52px">${esc(r.title)}</textarea></td>
+      <td><input type="text" data-aic="${k}" data-f="segs" value="${esc(r.segs)}"></td>
+      <td><select data-aic="${k}" data-f="decision">${dec.map(d => `<option ${r.decision===d?'selected':''} value="${d}">${d||'Select…'}</option>`).join('')}</select></td>
+      <td><textarea data-aic="${k}" data-f="comment" style="min-height:52px">${esc(r.comment)}</textarea></td>
+      <td><textarea lang="es" data-aic="${k}" data-f="version" style="min-height:52px">${esc(r.version)}</textarea></td>
+      <td><button class="btn small ghost" data-delaic="${k}">✕</button></td></tr>`).join('') : '<tr><td colspan="6" class="muted small">No rows yet.</td></tr>') +
+    `</tbody></table><div class="row" style="margin-top:10px"><button class="btn small sec" id="addAicBtn">+ Add AI suggestion</button></div></div>`;
+  $('addAicBtn').addEventListener('click', () => { collectForms(); S.aiCustom.push({title:'',segs:'',decision:'',comment:'',version:''}); renderAICustom(); save(); });
+  $('aiCustom').querySelectorAll('[data-delaic]').forEach(b => b.addEventListener('click', () => { collectForms(); S.aiCustom.splice(+b.dataset.delaic,1); renderAICustom(); save(); }));
 }
 
 /* ==================== MATERIALS & TIME ==================== */
@@ -946,6 +1067,7 @@ function collectForms(){
   document.querySelectorAll('[data-ai]').forEach(el => { S.ai[+el.dataset.ai][el.dataset.f] = el.value; });
   document.querySelectorAll('[data-mat]').forEach(el => { if(S.mats[+el.dataset.mat]) S.mats[+el.dataset.mat][el.dataset.f] = el.value; });
   document.querySelectorAll('[data-time]').forEach(el => { S.time[+el.dataset.time][el.dataset.f] = el.value; });
+  document.querySelectorAll('[data-aic]').forEach(el => { if(S.aiCustom && S.aiCustom[+el.dataset.aic]) S.aiCustom[+el.dataset.aic][el.dataset.f] = el.value; });
   document.querySelectorAll('[data-log]').forEach(el => { S.log[+el.dataset.log] = el.value; });
   document.querySelectorAll('[data-xlog]').forEach(el => { if(S.extraLog[+el.dataset.xlog]) S.extraLog[+el.dataset.xlog][el.dataset.f] = el.value; });
   if(!$('step2').classList.contains('hidden')) S.fullPe = $('fullPe').value;
@@ -971,7 +1093,7 @@ function computeSummary(){
   const byCat = {};
   S.errors.forEach(e => { byCat[e.cat] = byCat[e.cat] || {Critical:0,Major:0,Minor:0,Preferential:0,Source:0,total:0}; byCat[e.cat][e.sev]++; byCat[e.cat].total++; });
   const ai = {Accept:0, Modify:0, Reject:0, 'Partly applies':0, '':0};
-  S.ai.forEach(a => ai[a.decision]++);
+  (FS.custom ? (S.aiCustom || []) : S.ai).forEach(a => { ai[a.decision] = (ai[a.decision] || 0) + 1; });
   return { words, cnt, penalty, score, editPct: mtW ? Math.round(ed/mtW*1000)/10 : 0, edited, reviewed, total: FS.segments.length, byCat, ai, minutesLogged: timeTotal(), activeMin: Math.round(S.activeSec/60) };
 }
 function renderSummary(restore){
@@ -1005,14 +1127,15 @@ function buildPayload(){
     submittedAt: new Date().toISOString(),
     startedAt: S.startedAt,
     student: Object.assign({}, st, { peLevel: m.score < CONFIG.FULL_PE_THRESHOLD ? 'Full (score < ' + CONFIG.FULL_PE_THRESHOLD + ')' : 'Light (score ≥ ' + CONFIG.FULL_PE_THRESHOLD + ')' }),
-    factSheet: { id: FS.id, title: FS.title, mtEngine: FS.mtEngine, segments: FS.segments.length, words: m.words },
+    factSheet: { id: FS.custom ? (FS.code || FS.id) : FS.id, title: FS.title + (FS.custom ? ' [student-added]' : ''), mtEngine: FS.mtEngine, segments: FS.segments.length, words: m.words },
     summary: { mtErrors: S.errors.filter(e=>e.sev!=='Source').length, critical: m.cnt.Critical, major: m.cnt.Major, minor: m.cnt.Minor, preferential: m.cnt.Preferential, sourceIssues: m.cnt.Source,
       penalty: m.penalty, mqmScore: m.score, editDistancePct: m.editPct, segmentsEdited: m.edited, segmentsReviewed: m.reviewed,
       aiAccept: m.ai.Accept, aiModify: m.ai.Modify, aiReject: m.ai.Reject, aiPartly: m.ai['Partly applies'], minutesLogged: m.minutesLogged, activeMinutesInTool: m.activeMin },
     assessment: { quality: S.a.aQuality||'', audience: S.a.aAudience||'', recurring: S.a.aRecurring||'', formatting: S.a.aFormatting||'', queries: S.a.aQueries||'', reflection: S.a.aReflection||'', trackChangesLink: S.a.tcLink||'', noMissingMaterials: !!S.noMat },
     errors: S.errors.map(e => ({ seg:e.seg, section:FS.segments[e.seg-1][0], source:FS.segments[e.seg-1][1], mt:FS.segments[e.seg-1][2], focusArea:e.cat, errorType:e.sub, correctionType:e.ct||'', severity:e.sev==='Source'?'Source issue':e.sev, span:e.span, correction:e.fix, justification:e.why })),
     segments: FS.segments.map((s,i) => { const d = editDistance(s[2], S.segs[i].pe); return { seg:i+1, section:s[0], source:s[1], mt:s[2], postEdit:S.segs[i].pe, editDistancePct:d.pct, wordEdits:d.edits, errors:segErrors(i).length, seconds:S.segs[i].sec, reviewed:!!(S.segs[i].reviewed||segErrors(i).length) }; }),
-    aiReview: FS.aiReview.map((a,k) => ({ item:k+1, title:a.title, segments:a.seg.join(', '), suggestion:a.suggestion, decision:S.ai[k].decision, reasoning:S.ai[k].comment, studentVersion:S.ai[k].version })),
+    aiReview: FS.custom ? (S.aiCustom || []).map((r,k) => ({ item:k+1, title:r.title, segments:r.segs, suggestion:r.title, decision:r.decision, reasoning:r.comment, studentVersion:r.version }))
+      : FS.aiReview.map((a,k) => ({ item:k+1, title:a.title, segments:a.seg.join(', '), suggestion:a.suggestion, decision:S.ai[k].decision, reasoning:S.ai[k].comment, studentVersion:S.ai[k].version })),
     materials: S.mats.map(x => ({ type:x.type, location:x.loc, issue:x.what, request:x.need })),
     fullPostEdit: S.fullPe || '',
     changeLog: changeLog(),
@@ -1041,7 +1164,7 @@ function submit(){
   fetch(CONFIG.SCRIPT_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify(p) })
     .then(() => {
       S.submitted = true; save();
-      msg.innerHTML = `<div class="notice ok"><b>Submitted.</b> Your review of ${esc(FS.id)} was sent to the project sheet on ${new Date().toLocaleString()}. Keep the CSV as your receipt.</div>`;
+      msg.innerHTML = `<div class="notice ok"><b>Submitted.</b> Your review of ${esc(FS.custom ? FS.title : FS.id)} was sent to the project sheet on ${new Date().toLocaleString()}. Keep the CSV as your receipt.</div>`;
       downloadCSV();
     })
     .catch(err => { msg.innerHTML = `<div class="notice err">Could not reach the project sheet (${esc(err.message)}). Your draft is saved on this device. Check your connection and try again, or download the CSV and send it to your instructor.</div>`; })
