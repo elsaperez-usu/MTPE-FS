@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MTPE Error Guide & Rubric · CTIS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#00263A;--navy2:#0F3B53;--ink:#1d2730;--muted:#5d6b77;--line:#d9dee3;--bg:#f4f5f7;--grey-l:#e9ecef;
+  --crit:#9b1c1c;--major:#c2410c;--minor:#a16207;--pref:#4b5563;--src:#1d4ed8;--ok:#166534}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Source Sans 3",system-ui,sans-serif;color:var(--ink);background:var(--bg);font-size:16px;line-height:1.5}
+h1,h2,h3{font-family:"Playfair Display",Georgia,serif;color:var(--navy);margin:0 0 .4em}
+h1{font-size:1.5rem}h2{font-size:1.25rem}h3{font-size:1.05rem}
+button{font-family:inherit;cursor:pointer}
+header{background:var(--navy);color:#fff;padding:14px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+header b{font-family:"Playfair Display",serif;font-size:1.2rem}
+header span{font-size:.85rem;opacity:.85}
+nav{display:flex;background:#fff;border-bottom:1px solid var(--line);overflow-x:auto}
+nav button{flex:1;min-width:160px;border:0;background:none;padding:13px 10px;font-size:.95rem;font-weight:600;color:var(--muted);border-bottom:3px solid transparent}
+nav button.on{color:var(--navy);border-bottom-color:var(--navy)}
+main{max-width:1200px;margin:0 auto;padding:22px}
+.card{background:#fff;border:1px solid var(--line);border-radius:8px;padding:20px;margin-bottom:16px}
+.muted{color:var(--muted)}.small{font-size:.86rem}
+.hidden{display:none!important}
+/* error types */
+.types{display:grid;grid-template-columns:330px 1fr;gap:18px;align-items:start}
+.areas{background:#fff;border:1px solid var(--line);border-radius:8px;overflow:hidden;position:sticky;top:10px}
+.area{border-bottom:1px solid var(--line)}
+.area:last-child{border-bottom:0}
+.area>button{display:flex;width:100%;justify-content:space-between;align-items:center;border:0;background:#f8f9fa;padding:11px 14px;font-weight:700;color:var(--navy);font-size:.95rem;text-align:left}
+.area>button .cnt{font-weight:500;color:var(--muted);font-size:.8rem}
+.area .subs{padding:6px 10px 10px;display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:#fff;border-radius:16px;padding:4px 11px;font-size:.85rem;color:var(--ink)}
+.chip:hover{border-color:var(--navy2)}
+.chip.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.chip.seen::after{content:" ✓";color:var(--ok)}
+.chip.on.seen::after{color:#b9e3c6}
+.detail .area-desc{border-left:3px solid var(--navy);padding:4px 12px;background:#f8f9fa;margin:6px 0 14px;font-size:.92rem}
+.lbl{font-size:.74rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700;color:var(--muted);margin:14px 0 4px}
+.box{border:1px solid var(--line);border-radius:6px;padding:10px 14px;white-space:pre-wrap}
+.box.src{background:#f8f9fa}
+.box.mt{background:#fffdf7}
+.box.fix{background:#eef8f1;border-color:#b9dfc5}
+mark.bad{background:#fde8e8;border-bottom:2px solid var(--crit);padding:0 2px}
+mark.good{background:#d3f0dc;border-bottom:2px solid var(--ok);padding:0 2px}
+.btn{border:1px solid var(--navy);background:var(--navy);color:#fff;padding:9px 16px;border-radius:6px;font-weight:600;font-size:.95rem}
+.btn:hover{background:var(--navy2)}
+.btn.sec{background:#fff;color:var(--navy)}
+.btn.sec:hover{background:var(--grey-l)}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.spacer{flex:1}
+.pill{display:inline-block;padding:1px 9px;border-radius:10px;font-size:.8rem;font-weight:700;border:1px solid currentColor;margin-right:4px}
+.sev-Critical{color:var(--crit)}.sev-Major{color:var(--major)}.sev-Minor{color:var(--minor)}.sev-Preferential{color:var(--pref)}.sev-Source{color:var(--src)}
+.guess{margin-top:14px;padding:12px 14px;border:1px dashed var(--navy2);border-radius:8px;background:#f9fbfc}
+.guess .opts{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.guess .opts button{border:1px solid var(--line);background:#fff;border-radius:16px;padding:4px 12px;font-size:.88rem}
+.guess .opts button.right{background:#eaf6ee;border-color:var(--ok);color:var(--ok);font-weight:700}
+.guess .opts button.wrong{background:#fdecec;border-color:#e3a3a3;color:var(--crit)}
+.reveal{margin-top:12px}
+.tip{background:#eef2f5;border:1px solid #c9d4dd;border-radius:6px;padding:9px 13px;font-size:.9rem;margin-top:12px}
+/* severity helper */
+.q{font-size:1.15rem;font-family:"Playfair Display",serif;color:var(--navy);margin:6px 0 14px}
+.answers{display:flex;gap:10px;flex-wrap:wrap}
+.trail{margin-top:16px;font-size:.88rem;color:var(--muted)}
+.trail div{padding:2px 0}
+.result{border-radius:8px;padding:16px;margin-top:6px;border:2px solid}
+.sevtable td,.sevtable th{padding:8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;font-size:.92rem}
+table{border-collapse:collapse;width:100%}
+/* rubric */
+.crit{border:1px solid var(--line);border-radius:8px;margin-bottom:12px;background:#fff;overflow:hidden}
+.crit-head{display:flex;align-items:center;gap:10px;padding:12px 16px;background:#f8f9fa;border-bottom:1px solid var(--line)}
+.crit-head b{color:var(--navy);font-size:1rem}
+.levels{display:grid;grid-template-columns:repeat(4,1fr)}
+.level{border:0;border-right:1px solid var(--line);background:#fff;text-align:left;padding:12px 14px;font-size:.88rem;color:var(--ink);line-height:1.4}
+.level:last-child{border-right:0}
+.level:hover{background:#f4f6f8}
+.level .lv{display:block;font-weight:700;color:var(--navy);margin-bottom:4px;font-size:.82rem}
+.level.on{background:#e6edf2;box-shadow:inset 0 0 0 2px var(--navy)}
+.scorebar{position:sticky;bottom:0;background:var(--navy);color:#fff;border-radius:8px;padding:12px 18px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.scorebar b{font-family:"Playfair Display",serif;font-size:1.6rem}
+.scorebar .btn{background:#fff;color:var(--navy);border-color:#fff}
+.meter{flex:1;min-width:120px;height:8px;background:rgba(255,255,255,.25);border-radius:4px;overflow:hidden}
+.meter i{display:block;height:100%;background:#fff;width:0;transition:width .2s}
+footer{text-align:center;color:var(--muted);font-size:.8rem;padding:20px;border-top:1px solid var(--line);margin-top:20px}
+footer a{color:var(--muted)}
+@media (max-width:860px){.types{grid-template-columns:1fr}.areas{position:static}.levels{grid-template-columns:1fr}.level{border-right:0;border-bottom:1px solid var(--line)}}
+</style>
+</head>
+<body>
+<header>
+  <div><b>MTPE Error Guide &amp; Rubric</b><br><span>USU Extension Spanish Fact Sheets · Pilot</span></div>
+  <span>Elsa Pérez, PhD · CTIS</span>
+</header>
+<nav id="tabs">
+  <button data-tab="types" class="on">Error types</button>
+  <button data-tab="severity">Severity helper</button>
+  <button data-tab="rubric">Rubric &amp; self-check</button>
+</nav>
+<main>
+
+<section id="tab-types">
+  <div class="card">
+    <h1>Error types</h1>
+    <p>Click a focus area, then an error type. Read the example and decide how serious the error is before you reveal the correction. The examples come from other Extension topics, so they don’t give away the errors in your assigned fact sheet.</p>
+    <p class="small muted" id="seenCount"></p>
+  </div>
+  <div class="types">
+    <aside class="areas" id="areas"></aside>
+    <div class="card detail" id="detail"></div>
+  </div>
+</section>
+
+<section id="tab-severity" class="hidden">
+  <div class="card">
+    <h1>Severity helper</h1>
+    <p>Not sure how serious an error is? Answer the questions in order. Stop at the first “yes”.</p>
+    <div id="sevFlow"></div>
+  </div>
+  <div class="card">
+    <h2>Severity scale</h2>
+    <table class="sevtable" id="sevTable"></table>
+  </div>
+</section>
+
+<section id="tab-rubric" class="hidden">
+  <div class="card">
+    <h1>Rubric &amp; self-check</h1>
+    <p>This is the rubric your instructor uses. Before you submit, click the level that best describes your work for each criterion. Your estimated score updates as you go and is not sent anywhere.</p>
+  </div>
+  <div id="rubric"></div>
+  <div class="scorebar">
+    <div><span class="small">Estimated score</span><br><b id="score">—</b> <span class="small" id="scoreOf"></span></div>
+    <div class="meter"><i id="meter"></i></div>
+    <button class="btn" id="resetRub">Clear</button>
+  </div>
+</section>
+
+</main>
+<footer>MTPE Error Guide &amp; Rubric © 2026 by Elsa Pérez, PhD · Center for Translation and Interpretation Studies, Utah State University · licensed under <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></footer>
+
+<script>
+/* [[ ]] marks the error in "mt" and the fix in "fix". */
+const AREAS = [
+ {name:'Accuracy', desc:'Does the Spanish say what the English says: no more, no less, with the right numbers?', types:[
+  {t:'Mistranslation', def:'The Spanish conveys a different meaning from the English. In technical texts this often comes from a word with several meanings, such as “rate” or “drift”.',
+   src:'Apply fertilizer at a rate of 40 pounds per acre.', mt:'Aplique fertilizante a una [[velocidad]] de 40 libras por acre.', fix:'Aplique fertilizante a una [[dosis]] de 40 libras por acre.',
+   sev:'Major', why:'“Rate” here means amount per area, not speed. A reader could not follow the instruction. It would be critical if it led to a wrong amount being applied.'},
+  {t:'Omission', def:'Information in the English is missing in the Spanish. Check time limits, quantities, negations, and conditions especially carefully.',
+   src:'Do not enter treated areas for 12 hours after application.', mt:'No entre en las zonas tratadas después de la aplicación.', fix:'No entre en las zonas tratadas [[durante 12 horas]] después de la aplicación.',
+   sev:'Critical', why:'The safety interval is gone. As written, the reader is told never to enter, or may ignore the instruction entirely.'},
+  {t:'Addition', def:'The Spanish adds information, emphasis, or instructions that are not in the English.',
+   src:'Water the plants in the morning.', mt:'Riegue las plantas [[abundantemente]] por la mañana.', fix:'Riegue las plantas por la mañana.',
+   sev:'Major', why:'“Abundantemente” is a new instruction that could lead to overwatering. Delete it rather than reword it.'},
+  {t:'Numbers, units & calculations', def:'Numbers, decimal separators, units, or results differ from the English or are wrong. Recalculate every example.',
+   src:'Mix 1.5 fl oz of product per gallon of water.', mt:'Mezcle [[15 onzas]] de producto por galón de agua.', fix:'Mezcle [[1,5 onzas líquidas]] de producto por galón de agua.',
+   sev:'Critical', why:'The decimal was lost (1.5 → 15), giving ten times the dose. “Onzas” alone is also ambiguous: fluid ounces measure volume, ounces measure weight.'},
+  {t:'Untranslated text', def:'English words are left in the Spanish where they should be translated. Proper names, product names, and URLs are the exception.',
+   src:'Store in a cool, dry place.', mt:'Guárdelo en un [[cool, dry place]].', fix:'Guárdelo en un [[lugar fresco y seco]].',
+   sev:'Major', why:'A reader who does not know English misses the storage instruction.'}
+ ]},
+ {name:'Terminology', desc:'Is each technical term the one used in agriculture and pesticide labels, and right for the readers?', types:[
+  {t:'Incorrect term', def:'The word exists but is not the accepted term in the field.',
+   src:'Replace worn nozzles before each season.', mt:'Reemplace las [[bocas]] desgastadas antes de cada temporada.', fix:'Reemplace las [[boquillas]] desgastadas antes de cada temporada.',
+   sev:'Major', why:'The accepted term for a sprayer nozzle is “boquilla”. Check it against labels, glossaries, or Spanish-language Extension publications.'},
+  {t:'Term not suited to the field or audience', def:'The term is technically correct but too scientific, or unfamiliar to the people who will read the fact sheet.',
+   src:'Aphids can damage young plants.', mt:'Los [[áfidos]] pueden dañar las plantas jóvenes.', fix:'Los [[pulgones]] pueden dañar las plantas jóvenes.',
+   sev:'Minor', why:'Growers and gardeners say “pulgones”. You can keep the technical term in parentheses the first time it appears if it helps.'}
+ ]},
+ {name:'Readability', desc:'Can a Spanish-speaking reader understand it on the first read?', types:[
+  {t:'Unclear or awkward wording', def:'The sentence is grammatically possible but follows English structure (a calque) and sounds unnatural or confusing.',
+   src:'Making the effort to rinse equipment can save time.', mt:'[[Haciendo el esfuerzo de enjuagar el equipo puede ahorrar tiempo.]]', fix:'[[Enjuagar bien el equipo le puede ahorrar tiempo.]]',
+   sev:'Minor', why:'An English gerund subject copied into Spanish. Rewrite it with an infinitive and a natural verb.'},
+  {t:'Grammar', def:'Agreement, verb form, prepositions, or other grammar errors.',
+   src:'Seeds should be planted after the last frost.', mt:'Las semillas [[debe]] sembrarse después de la última helada.', fix:'Las semillas [[deben]] sembrarse después de la última helada.',
+   sev:'Minor', why:'Subject–verb agreement. Meaning is clear, but a professional text cannot be published with this error.'},
+  {t:'Spelling & punctuation', def:'Accents, opening question and exclamation marks, capitalization within sentences, typos.',
+   src:'How deep should you plant?', mt:'[[Que]] tan profundo debe sembrar[[?]]', fix:'[[¿Qué]] tan profundo debe sembrar[[?]]',
+   sev:'Minor', why:'Missing opening question mark and the accent on interrogative “qué”.'},
+  {t:'Not plain language', def:'The register is more formal or bureaucratic than the English, which makes it harder to read.',
+   src:'Use the product as directed.', mt:'Utilice el producto [[conforme a lo preceptuado]].', fix:'Use el producto [[según las instrucciones]].',
+   sev:'Minor', why:'Extension fact sheets are written for the public. Match the plain style of the English.'}
+ ]},
+ {name:'Consistency', desc:'Is the same thing said the same way throughout the document?', types:[
+  {t:'Inconsistent term', def:'One concept is translated with different words in different places, so readers may think they are different things.',
+   src:'Segment 4: Check the sprinkler. · Segment 9: Clean the sprinkler.', mt:'Revise el aspersor. · Limpie el [[rociador]].', fix:'Revise el aspersor. · Limpie el [[aspersor]].',
+   sev:'Minor', why:'Pick one term, use it everywhere, and note it in your terminology list.'},
+  {t:'Inconsistent form of address (tú/usted)', def:'The text switches between usted and tú. Extension fact sheets use usted.',
+   src:'Wash your hands and dry the equipment.', mt:'Lave sus manos y [[seca]] el equipo.', fix:'Lávese las manos y [[seque]] el equipo.',
+   sev:'Minor', why:'“Lave” is usted and “seca” is tú. Also, Spanish uses the article, not the possessive, with body parts.'},
+  {t:'Inconsistent capitalization or style', def:'Headings, titles, or labels follow English capitalization or switch styles.',
+   src:'How to Plant Tomatoes', mt:'Cómo [[Plantar Tomates]]', fix:'Cómo [[plantar tomates]]',
+   sev:'Minor', why:'Spanish titles and headings capitalize only the first word and proper nouns.'}
+ ]},
+ {name:'Cultural & linguistic appropriateness', desc:'Does it fit Spanish speakers in Utah and the U.S., not only a dictionary?', types:[
+  {t:'Regional variant (es-ES vs. U.S. Spanish)', def:'The word or form is fine in Spain but unusual, confusing, or inappropriate for most U.S. Spanish speakers.',
+   src:'Pick up the bucket.', mt:'[[Coja el cubo]].', fix:'[[Tome la cubeta]].',
+   sev:'Major', why:'“Coger” is vulgar in much of Latin America, and “cubo” is less common than “cubeta” or “balde”. DeepL often defaults to Spain.'},
+  {t:'Locale conventions (decimals, units, dates)', def:'Dates, number formats, or units follow a convention readers will misread.',
+   src:'Workshop on 06/07/2026', mt:'Taller el [[06/07/2026]]', fix:'Taller el [[7 de junio de 2026]]',
+   sev:'Major', why:'Most Spanish speakers read 06/07 as 6 July. Write the month out. Agree on decimal point or comma for the whole project.'},
+  {t:'Register or cultural fit', def:'The tone is too casual, too formal, or not culturally natural for a public institutional text.',
+   src:'Check the label.', mt:'[[Échele un ojo]] a la etiqueta.', fix:'[[Revise]] la etiqueta.',
+   sev:'Minor', why:'Too colloquial for a peer-reviewed fact sheet.'}
+ ]},
+ {name:'Formatting', desc:'Does the Spanish document look and work like the English one?', types:[
+  {t:'Layout or segmentation break', def:'A sentence or list item is split, merged, or interrupted by another element during conversion.',
+   src:'• Wear nitrile gloves when mixing.', mt:'• [[Use guantes de]]\n• [[nitrilo al mezclar.]]', fix:'• [[Use guantes de nitrilo al mezclar.]]',
+   sev:'Major', why:'One instruction now reads as two meaningless bullets. Fix it in the Word file and note it for layout.'},
+  {t:'Figure, table, or caption', def:'Caption numbers, labels, table headers, or text inside images do not match the source or are untranslated.',
+   src:'Figure 3. Drip irrigation line', mt:'[[Figura 2]]. Línea de riego por goteo', fix:'[[Figura 3]]. Línea de riego por goteo',
+   sev:'Major', why:'The caption no longer matches the in-text reference. If an image contains English text, report it in Missing materials.'},
+  {t:'Lists, headings, or references', def:'Numbering, heading levels, or reference entries are lost or changed.',
+   src:'Step 3: Fill the tank.', mt:'[[Paso 4]]: Llene el tanque.', fix:'[[Paso 3]]: Llene el tanque.',
+   sev:'Minor', why:'Steps must keep the source numbering. Check that list numbers survived the conversion.'}
+ ]},
+ {name:'Source issue (no penalty)', desc:'The problem is in the English original. Don’t count it against DeepL; query the author.', types:[
+  {t:'Error in the English source', def:'The English contains an arithmetic, factual, or reference error. Translate the intended meaning only after the author confirms it.',
+   src:'2 cups = 12 fl oz', mt:'2 tazas = [[12 onzas líquidas]]', fix:'2 tazas = [[16 onzas líquidas]] (pending author confirmation)',
+   sev:'Source', why:'DeepL translated correctly; the source is wrong (2 cups = 16 fl oz). Record it as a source issue and add it to “Questions for the author”.'},
+  {t:'Ambiguity: query the author', def:'The English can be read two ways and the choice changes the Spanish.',
+   src:'Apply 2 lb per 1,000 sq ft.', mt:'Aplique 2 libras por cada 1000 pies cuadrados.', fix:'Ask the author: 2 lb of product or 2 lb of active ingredient?',
+   sev:'Source', why:'The translation is faithful, but readers need the basis to apply the right amount. Flag it; don’t guess.'}
+ ]}
+];
+const SEVS = [
+  {s:'Critical', pts:25, d:'Could lead to unsafe handling, exposure, a wrong dose or concentration, or noncompliance with the label.'},
+  {s:'Major', pts:5, d:'Meaning changes or becomes unclear; a reader is likely to misunderstand or need to reread.'},
+  {s:'Minor', pts:1, d:'Meaning is intact, but there is a grammar, convention, consistency, or style problem a professional would fix.'},
+  {s:'Preferential', pts:0, d:'The MT is acceptable; your change is a preference. Record it, but avoid over-editing.'},
+  {s:'Source', pts:0, d:'The problem is in the English original. Query the author; it does not count against the MT.'}
+];
+const FLOW = [
+  {q:'Is the problem in the English original?', yes:'Source', hint:'Example: the source arithmetic is wrong, or the English is ambiguous.'},
+  {q:'Could a reader handle the product unsafely, be exposed, use the wrong amount or concentration, or break the label because of this?', yes:'Critical', hint:'Think about what someone mixing a pesticide would actually do after reading the Spanish.'},
+  {q:'Does the meaning change, or would a reader likely misunderstand or need to reread?', yes:'Major', hint:'Includes untranslated text, wrong terms, wrong variant words, and broken sentences.'},
+  {q:'Would a professional editor have to fix it before publication (grammar, spelling, consistency, convention, style)?', yes:'Minor', hint:'Meaning is intact, but it is not publishable as is.'}
+];
+const RUBRIC = [
+  {c:'Error identification (accuracy)', w:25, l:['Finds all critical and major meaning, number, unit, and safety errors; distinguishes source issues from MT errors.','Finds nearly all critical and major errors; misses minor ones only.','Misses one or more major errors or misclassifies source issues as MT errors.','Misses critical errors (dose, safety, calculation) or flags few real errors.']},
+  {c:'Classification & severity', w:15, l:['Focus area, error type, and severity are accurate and consistent; justifications are specific and cite sources where needed.','Mostly accurate; a few severity or category choices are debatable.','Frequent misclassification or vague justifications.','Categories and severities are largely missing or wrong.']},
+  {c:'Quality of proposed edits', w:20, l:['Edits fix the error, are idiomatic and plain-language, introduce no new errors, and avoid over-editing.','Edits are correct, with occasional awkwardness or unnecessary preferential changes.','Some edits are incomplete or introduce new problems; noticeable over- or under-editing.','Edits are often wrong or the MT is left uncorrected.']},
+  {c:'Terminology, consistency & audience', w:15, l:['Consistent field terminology and usted throughout; variant choices fit a U.S. Spanish-speaking audience and are justified.','Mostly consistent; minor lapses.','Several inconsistencies in terms, address, or variant.','Little attention to terminology, consistency, or audience.']},
+  {c:'Critical use of the AI review', w:10, l:['Every AI item is evaluated; decisions are well reasoned, and incorrect or overreaching suggestions are identified.','All items evaluated with reasonable justifications.','Some items evaluated superficially or accepted without reasoning.','AI suggestions are accepted wholesale or not evaluated.']},
+  {c:'Formatting & missing materials', w:5, l:['Identifies all layout, caption, figure, and reference issues and gives clear requests to the team.','Identifies most formatting issues and missing items.','Identifies few formatting issues; requests are unclear.','Formatting and missing materials are not addressed.']},
+  {c:'Documentation & professionalism', w:10, l:['Track Changes file is complete and commented; time log is detailed; assessment is useful to the client.','Deliverables complete with minor gaps.','A deliverable is incomplete or the time log is vague.','Track Changes file or time log is missing.']}
+];
+const LV = ['Exemplary (4)','Proficient (3)','Developing (2)','Beginning (1)'];
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const marked = (s, cls) => esc(s).split('[[').join('<mark class="'+cls+'">').split(']]').join('</mark>');
+const sevLabel = s => s === 'Source' ? 'Source issue' : s;
+function get(k){ try { return JSON.parse(localStorage.getItem('ctis-guide-'+k)); } catch(e){ return null; } }
+function put(k,v){ try { localStorage.setItem('ctis-guide-'+k, JSON.stringify(v)); } catch(e){} }
+
+let openArea = 0, curA = 0, curT = 0;
+const seen = new Set(get('seen') || []);
+
+/* ---- tabs ---- */
+function showTab(name){
+  ['types','severity','rubric'].forEach(t => $('tab-'+t).classList.toggle('hidden', t!==name));
+  document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.tab===name));
+  if(location.hash !== '#'+name) history.replaceState(null,'','#'+name);
+}
+document.querySelectorAll('#tabs button').forEach(b => b.addEventListener('click', () => showTab(b.dataset.tab)));
+window.addEventListener('hashchange', () => { const h = location.hash.slice(1); if(['types','severity','rubric'].includes(h)) showTab(h); });
+
+/* ---- error types ---- */
+function renderAreas(){
+  const total = AREAS.reduce((n,a) => n + a.types.length, 0);
+  $('seenCount').textContent = `You have opened ${seen.size} of ${total} error types.`;
+  $('areas').innerHTML = AREAS.map((a,i) => `<div class="area">
+    <button data-area="${i}">${esc(a.name)} <span class="cnt">${a.types.length} ${i===openArea?'▾':'▸'}</span></button>
+    <div class="subs ${i===openArea?'':'hidden'}">${a.types.map((t,j) => `<button class="chip ${i===curA&&j===curT?'on':''} ${seen.has(i+'.'+j)?'seen':''}" data-a="${i}" data-t="${j}">${esc(t.t)}</button>`).join('')}</div></div>`).join('');
+  $('areas').querySelectorAll('[data-area]').forEach(b => b.addEventListener('click', () => { const i = +b.dataset.area; openArea = openArea===i ? -1 : i; renderAreas(); }));
+  $('areas').querySelectorAll('.chip').forEach(b => b.addEventListener('click', () => pick(+b.dataset.a, +b.dataset.t)));
+}
+function pick(a, t){
+  curA = a; curT = t; openArea = a;
+  seen.add(a+'.'+t); put('seen', [...seen]);
+  renderAreas(); renderDetail();
+  if(window.innerWidth < 860) $('detail').scrollIntoView({behavior:'smooth'});
+}
+function renderDetail(){
+  const A = AREAS[curA], T = A.types[curT];
+  const opts = ['Critical','Major','Minor','Preferential','Source'];
+  $('detail').innerHTML = `
+    <div class="row"><span class="muted small">${esc(A.name)}</span></div>
+    <h2>${esc(T.t)}</h2>
+    <div class="area-desc">${esc(A.desc)}</div>
+    <p>${esc(T.def)}</p>
+    <div class="lbl">English source</div><div class="box src">${esc(T.src)}</div>
+    <div class="lbl">Machine translation</div><div class="box mt" lang="es">${marked(T.mt,'bad')}</div>
+    <div class="guess" id="guess">
+      <b>How serious is it?</b> <span class="small muted">Choose a severity, then check the correction.</span>
+      <div class="opts">${opts.map(o => `<button data-g="${o}">${sevLabel(o)}</button>`).join('')}</div>
+      <div class="small" id="gFeedback" style="margin-top:6px"></div>
+    </div>
+    <div class="row" style="margin-top:14px"><button class="btn" id="revealBtn">Show correction</button><span class="spacer"></span>
+      <button class="btn sec" id="prevT">← Previous type</button><button class="btn sec" id="nextT">Next type →</button></div>
+    <div class="reveal hidden" id="reveal">
+      <div class="lbl">Proposed correction</div><div class="box fix" lang="es">${marked(T.fix,'good')}</div>
+      <div class="lbl">Typical severity</div><div><span class="pill sev-${T.sev}">${sevLabel(T.sev)}</span></div>
+      <div class="lbl">Why</div><p style="margin:0">${esc(T.why)}</p>
+      <div class="tip">In the review tool, record this under <b>${esc(A.name)} › ${esc(T.t)}</b>. Paste the marked words as the MT text, write your correction, and explain why in the justification.</div>
+    </div>`;
+  $('detail').querySelectorAll('[data-g]').forEach(b => b.addEventListener('click', () => {
+    const g = b.dataset.g, ok = g === T.sev;
+    $('detail').querySelectorAll('[data-g]').forEach(x => { x.classList.remove('right','wrong'); if(x.dataset.g===T.sev && !ok) x.classList.add('right'); });
+    b.classList.add(ok ? 'right' : 'wrong');
+    $('gFeedback').innerHTML = ok ? '<b style="color:var(--ok)">Matches the typical severity.</b>' : `<b style="color:var(--crit)">Typical severity here is ${sevLabel(T.sev)}.</b> Severity depends on context, so read the explanation.`;
+    reveal();
+  }));
+  $('revealBtn').addEventListener('click', reveal);
+  $('prevT').addEventListener('click', () => step(-1));
+  $('nextT').addEventListener('click', () => step(1));
+}
+function reveal(){ $('reveal').classList.remove('hidden'); $('revealBtn').classList.add('hidden'); }
+function step(d){
+  const flat = []; AREAS.forEach((a,i) => a.types.forEach((t,j) => flat.push([i,j])));
+  const k = flat.findIndex(x => x[0]===curA && x[1]===curT);
+  const n = flat[(k + d + flat.length) % flat.length];
+  pick(n[0], n[1]);
+}
+
+/* ---- severity helper ---- */
+let fq = 0; const trail = [];
+function renderFlow(){
+  let h = '';
+  if(fq < FLOW.length && fq >= 0){
+    const F = FLOW[fq];
+    h = `<div class="small muted">Question ${fq+1} of ${FLOW.length}</div><div class="q">${esc(F.q)}</div><div class="small muted" style="margin:-8px 0 14px">${esc(F.hint)}</div>
+      <div class="answers"><button class="btn" id="fyes">Yes</button><button class="btn sec" id="fno">No</button></div>`;
+  }
+  const res = trail.length && trail[trail.length-1].result;
+  if(res){
+    const S = SEVS.find(x => x.s === res);
+    const col = {Critical:'var(--crit)',Major:'var(--major)',Minor:'var(--minor)',Preferential:'var(--pref)',Source:'var(--src)'}[res];
+    h = `<div class="result" style="border-color:${col}"><span class="pill sev-${res}">${sevLabel(res)}</span> <b>${S.pts} penalty points</b><p style="margin:8px 0 0">${esc(S.d)}</p>
+      ${res==='Preferential' ? '<p class="small muted" style="margin:6px 0 0">If you are not sure the change is needed, leave the MT as it is. Over-editing costs time and money.</p>' : ''}</div>
+      <div class="row" style="margin-top:12px"><button class="btn sec" id="frestart">Start again</button></div>`;
+  }
+  h += trail.length ? '<div class="trail">' + trail.map(t => `<div>${t.yes?'✔ Yes':'✘ No'} · ${esc(t.q)}</div>`).join('') + '</div>' : '';
+  $('sevFlow').innerHTML = h;
+  if($('fyes')) $('fyes').addEventListener('click', () => answer(true));
+  if($('fno')) $('fno').addEventListener('click', () => answer(false));
+  if($('frestart')) $('frestart').addEventListener('click', () => { fq = 0; trail.length = 0; renderFlow(); });
+}
+function answer(yes){
+  const F = FLOW[fq];
+  const t = {q:F.q, yes};
+  if(yes){ t.result = F.yes; fq = -1; }
+  else if(fq === FLOW.length-1){ t.result = 'Preferential'; fq = -1; }
+  else fq++;
+  trail.push(t); renderFlow();
+}
+$('sevTable').innerHTML = '<tr><th>Severity</th><th>Use when…</th><th>Points</th></tr>' + SEVS.map(s => `<tr><td><span class="pill sev-${s.s}">${sevLabel(s.s)}</span></td><td>${esc(s.d)}</td><td>${s.pts}</td></tr>`).join('');
+
+/* ---- rubric ---- */
+const picks = get('rubric') || {};
+function renderRubric(){
+  $('rubric').innerHTML = RUBRIC.map((r,i) => `<div class="crit"><div class="crit-head"><b>${esc(r.c)}</b><span class="muted small">${r.w}%</span><span class="spacer"></span><span class="small" id="cs${i}"></span></div>
+    <div class="levels">${r.l.map((d,j) => `<button class="level ${picks[i]===j?'on':''}" data-c="${i}" data-l="${j}"><span class="lv">${LV[j]}</span>${esc(d)}</button>`).join('')}</div></div>`).join('');
+  $('rubric').querySelectorAll('.level').forEach(b => b.addEventListener('click', () => {
+    const c = +b.dataset.c, l = +b.dataset.l;
+    if(picks[c] === l) delete picks[c]; else picks[c] = l;
+    put('rubric', picks); renderRubric();
+  }));
+  let total = 0, done = 0;
+  RUBRIC.forEach((r,i) => {
+    if(picks[i] !== undefined){ const pts = (4 - picks[i]) / 4 * r.w; total += pts; done++; $('cs'+i).textContent = Math.round(pts*10)/10 + ' / ' + r.w; }
+  });
+  $('score').textContent = done ? Math.round(total*10)/10 : '—';
+  $('scoreOf').textContent = done ? `/ 100 · ${done} of ${RUBRIC.length} criteria rated` : 'Rate each criterion';
+  $('meter').style.width = (done ? total : 0) + '%';
+}
+$('resetRub').addEventListener('click', () => { Object.keys(picks).forEach(k => delete picks[k]); put('rubric', picks); renderRubric(); });
+
+renderAreas(); renderDetail(); renderFlow(); renderRubric();
+const h0 = location.hash.slice(1); if(['severity','rubric'].includes(h0)) showTab(h0);
+</script>
+</body>
+</html>

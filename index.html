@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MTPE &amp; QA Review — USU Extension Fact Sheets · CTIS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#00263A; --navy2:#0F3B53; --ink:#1d2730; --muted:#5d6b77; --line:#d9dee3;
+  --bg:#f4f5f7; --card:#fff; --grey:#8a96a0; --grey-l:#e9ecef;
+  --crit:#9b1c1c; --major:#c2410c; --minor:#a16207; --pref:#4b5563; --src:#1d4ed8; --ok:#166534;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:"Source Sans 3",system-ui,sans-serif;color:var(--ink);background:var(--bg);font-size:16px;line-height:1.5}
+h1,h2,h3{font-family:"Playfair Display",Georgia,serif;color:var(--navy);margin:0 0 .4em}
+h1{font-size:1.5rem} h2{font-size:1.3rem} h3{font-size:1.05rem}
+button{font-family:inherit;font-size:.95rem;cursor:pointer}
+input,select,textarea{font-family:inherit;font-size:.95rem;color:var(--ink)}
+header{background:var(--navy);color:#fff;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+header .brand{display:flex;flex-direction:column}
+header .brand b{font-family:"Playfair Display",serif;font-size:1.2rem;font-weight:700}
+header .brand span{font-size:.85rem;opacity:.8}
+header .meta{font-size:.85rem;text-align:right;opacity:.9}
+nav.steps{display:flex;background:#fff;border-bottom:1px solid var(--line);overflow-x:auto}
+nav.steps button{flex:1;min-width:150px;border:0;background:none;padding:12px 10px;border-bottom:3px solid transparent;color:var(--muted);font-weight:600}
+nav.steps button.active{color:var(--navy);border-bottom-color:var(--navy)}
+nav.steps button:disabled{opacity:.4;cursor:not-allowed}
+nav.steps button .n{display:inline-block;width:22px;height:22px;border-radius:50%;background:var(--grey-l);color:var(--navy);font-size:.8rem;line-height:22px;margin-right:6px}
+nav.steps button.active .n{background:var(--navy);color:#fff}
+main{max-width:1280px;margin:0 auto;padding:22px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:20px;margin-bottom:18px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+label{display:block;font-weight:600;font-size:.9rem;margin-bottom:4px}
+label small{font-weight:400;color:var(--muted)}
+input[type=text],input[type=email],input[type=url],input[type=number],select,textarea{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:#fff}
+textarea{resize:vertical;min-height:70px}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--navy2);outline-offset:0;border-color:var(--navy2)}
+.btn{border:1px solid var(--navy);background:var(--navy);color:#fff;padding:9px 16px;border-radius:6px;font-weight:600}
+.btn:hover{background:var(--navy2)}
+.btn.sec{background:#fff;color:var(--navy)}
+.btn.sec:hover{background:var(--grey-l)}
+.btn.small{padding:5px 10px;font-size:.85rem}
+.btn.ghost{border-color:transparent;background:none;color:var(--muted)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.spacer{flex:1}
+.muted{color:var(--muted)} .small{font-size:.85rem}
+.pill{display:inline-block;padding:1px 8px;border-radius:10px;font-size:.78rem;font-weight:600;border:1px solid currentColor}
+.sev-Critical{color:var(--crit)} .sev-Major{color:var(--major)} .sev-Minor{color:var(--minor)} .sev-Preferential{color:var(--pref)} .sev-Source{color:var(--src)}
+table{border-collapse:collapse;width:100%}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top;font-size:.9rem}
+th{font-weight:700;color:var(--navy);background:#f8f9fa}
+.focus-list{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:10px 0 0}
+.focus-list div{border-left:3px solid var(--navy);padding:6px 10px;background:#f8f9fa;font-size:.9rem}
+.focus-list b{display:block;color:var(--navy)}
+/* workspace */
+.ws{display:grid;grid-template-columns:270px 1fr;gap:18px;align-items:start}
+.seglist{position:sticky;top:10px;max-height:calc(100vh - 20px);overflow:auto;background:#fff;border:1px solid var(--line);border-radius:8px}
+.seglist .sechead{font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);padding:10px 12px 4px;font-weight:700}
+.seglist button{display:flex;gap:8px;align-items:flex-start;width:100%;text-align:left;border:0;background:none;padding:6px 12px;font-size:.85rem;color:var(--ink);border-left:3px solid transparent}
+.seglist button:hover{background:#f4f6f8}
+.seglist button.cur{background:#eef2f5;border-left-color:var(--navy)}
+.seglist .num{font-weight:700;color:var(--navy);min-width:22px}
+.seglist .txt{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dot{width:10px;height:10px;border-radius:50%;margin-top:5px;flex:none;border:1px solid var(--grey)}
+.dot.ok{background:var(--ok);border-color:var(--ok)}
+.dot.err{background:var(--major);border-color:var(--major)}
+.dot.crit{background:var(--crit);border-color:var(--crit)}
+.progress{height:6px;background:var(--grey-l);border-radius:3px;overflow:hidden;margin:6px 12px 10px}
+.progress i{display:block;height:100%;background:var(--navy);width:0}
+.pane{border:1px solid var(--line);border-radius:6px;padding:12px 14px;background:#fff;white-space:pre-wrap}
+.pane.src{background:#f8f9fa}
+.pane.mt{background:#fffdf7;cursor:text}
+.pane-label{font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700;color:var(--muted);margin:12px 0 4px;display:flex;justify-content:space-between;align-items:center}
+mark{background:none;border-bottom:2px solid;padding:0 1px}
+mark.Critical{border-color:var(--crit);background:#fde8e8}
+mark.Major{border-color:var(--major);background:#fff0e6}
+mark.Minor{border-color:var(--minor);background:#fef9e3}
+mark.Preferential{border-color:var(--pref);background:#f1f2f4}
+mark.Source{border-color:var(--src);background:#e8efff}
+.pe{min-height:90px;font-size:1rem}
+.errform{border:1px dashed var(--navy2);border-radius:8px;padding:14px;margin-top:12px;background:#f9fbfc}
+.errlist .err{border:1px solid var(--line);border-left:4px solid var(--grey);border-radius:6px;padding:8px 12px;margin-top:8px;background:#fff;font-size:.9rem}
+.errlist .err.Critical{border-left-color:var(--crit)} .errlist .err.Major{border-left-color:var(--major)} .errlist .err.Minor{border-left-color:var(--minor)} .errlist .err.Preferential{border-left-color:var(--pref)} .errlist .err.Source{border-left-color:var(--src)}
+.ai-hint{background:#f2f4f7;border:1px solid var(--line);border-radius:6px;padding:8px 12px;margin-top:10px;font-size:.88rem}
+.seg-nav{display:flex;gap:8px;margin-top:16px;align-items:center;flex-wrap:wrap}
+.stat{border:1px solid var(--line);border-radius:8px;padding:12px;background:#fff;text-align:center}
+.stat b{display:block;font-size:1.6rem;font-family:"Playfair Display",serif;color:var(--navy)}
+.stat span{font-size:.8rem;color:var(--muted)}
+.ai-item{border:1px solid var(--line);border-radius:8px;padding:14px;margin-bottom:12px;background:#fff}
+.ai-item .sugg{background:#f8f9fa;border-left:3px solid var(--grey);padding:6px 10px;margin:6px 0;font-style:italic}
+.choice{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.choice label{font-weight:500;border:1px solid var(--line);border-radius:16px;padding:4px 12px;cursor:pointer;margin:0}
+.choice input{margin-right:5px}
+.choice label.on{border-color:var(--navy);background:#eef2f5}
+.rub td,.rub th{font-size:.84rem}
+.rub td:first-child{font-weight:600;color:var(--navy);width:18%}
+.notice{padding:10px 14px;border-radius:6px;margin:10px 0;font-size:.92rem}
+.notice.info{background:#eef2f5;border:1px solid #c9d4dd}
+.notice.warn{background:#fff4e5;border:1px solid #f2c48d}
+.notice.ok{background:#eaf6ee;border:1px solid #b9dfc5}
+.notice.err{background:#fdecec;border:1px solid #f1b5b5}
+.timer{font-variant-numeric:tabular-nums}
+footer{text-align:center;color:var(--muted);font-size:.8rem;padding:20px;border-top:1px solid var(--line);margin-top:20px}
+footer a{color:var(--muted)}
+.hidden{display:none!important}
+.tgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px 14px;margin-top:6px}
+.tgrid .ta b{display:block;font-size:.78rem;color:var(--navy);text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px}
+.tchip{border:1px solid var(--line);background:#fff;border-radius:14px;padding:3px 10px;font-size:.82rem;margin:0 4px 4px 0;color:var(--ink)}
+.tchip:hover{border-color:var(--navy2)}
+.tchip.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.sevbtns button,.ctbtns button{border:1px solid var(--line);background:#fff;border-radius:14px;padding:4px 12px;font-size:.85rem;margin:0 6px 6px 0}
+.sevbtns button.on{color:#fff}
+.sevbtns button.on[data-sev=Critical]{background:var(--crit);border-color:var(--crit)}
+.sevbtns button.on[data-sev=Major]{background:var(--major);border-color:var(--major)}
+.sevbtns button.on[data-sev=Minor]{background:var(--minor);border-color:var(--minor)}
+.sevbtns button.on[data-sev=Preferential]{background:var(--pref);border-color:var(--pref)}
+.ctbtns button.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.sevbtns button:disabled{opacity:.35;cursor:not-allowed}
+.flbl{font-size:.82rem;font-weight:700;color:var(--navy);margin:10px 0 2px}
+.tdef{font-size:.85rem;color:var(--muted);background:#fff;border-left:3px solid var(--navy2);padding:4px 10px;margin-top:4px}
+.gate{border-radius:8px;padding:14px 18px;border:2px solid;display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.gate b.big{font-family:"Playfair Display",serif;font-size:2rem}
+.gate.full{border-color:var(--major);background:#fff6ef}
+.gate.light{border-color:var(--ok);background:#eef8f1}
+#logTable td textarea{min-height:52px}
+#logTable td.mt{background:#fffdf7;white-space:pre-wrap}
+#logTable td.ed{background:#eef8f1;white-space:pre-wrap}
+@media (max-width:900px){.ws{grid-template-columns:1fr}.seglist{position:static;max-height:260px}.grid2,.grid3,.focus-list{grid-template-columns:1fr}}
+@media print{header,nav.steps,.no-print,footer{display:none}body{background:#fff}.card{border:0}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><b>MTPE &amp; Quality Assurance Review</b><span>USU Extension Spanish Fact Sheets · Pilot</span></div>
+  <div class="meta"><span id="hdrMeta">Elsa Pérez, PhD · CTIS</span><br><a href="guide.html" target="_blank" rel="noopener" style="color:#fff">Error guide &amp; rubric ↗</a></div>
+</header>
+<nav class="steps" id="steps">
+  <button data-step="0" class="active"><span class="n">1</span>Start</button>
+  <button data-step="1" disabled><span class="n">2</span>Review segments</button>
+  <button data-step="2" disabled><span class="n">3</span>Post-editing &amp; change log</button>
+  <button data-step="3" disabled><span class="n">4</span>ChatGPT review check</button>
+  <button data-step="4" disabled><span class="n">5</span>Materials &amp; time log</button>
+  <button data-step="5" disabled><span class="n">6</span>Assessment &amp; submit</button>
+</nav>
+<main>
+
+<!-- STEP 0: START -->
+<section id="step0">
+  <div class="card">
+    <h1>Before you begin</h1>
+    <p>You will post-edit a DeepL Spanish translation of a USU Extension fact sheet against the English original. For each segment, <b>identify the errors</b>, <b>classify them</b>, and <b>propose your edit</b>. You will then evaluate the ChatGPT review, report missing source materials, and log your time. Your work is sent to the project spreadsheet when you submit.</p>
+    <p class="small muted">This tool records your error analysis. Your final edited file is still the Word document with <b>Track Changes</b> turned on, as agreed with the Extension team. You will paste its link in Step 6.</p>
+    <h3 style="margin-top:14px">Focus areas</h3>
+    <div class="focus-list">
+      <div><b>Accuracy</b>Meaning, omissions, additions, numbers, units, calculations.</div>
+      <div><b>Terminology</b>Correct agricultural and pesticide terms for the field.</div>
+      <div><b>Readability</b>Clear, grammatical, plain-language Spanish.</div>
+      <div><b>Consistency</b>The same term and form of address (usted) throughout.</div>
+      <div><b>Cultural &amp; linguistic appropriateness</b>Fit for Spanish-speaking audiences in Utah and the U.S.</div>
+      <div><b>Formatting</b>Layout, figures, captions, lists, headings, references.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Your information</h2>
+    <div class="grid2">
+      <div><label for="stName">Full name</label><input type="text" id="stName" autocomplete="name"></div>
+      <div><label for="stId">A-number <small>(e.g., A01234567)</small></label><input type="text" id="stId" maxlength="12"></div>
+      <div><label for="stEmail">USU email</label><input type="email" id="stEmail" autocomplete="email"></div>
+      <div><label for="stCourse">Course / role</label>
+        <select id="stCourse"><option value="">Select…</option><option>SPAN 4081</option><option>SPAN 3081</option><option>SPAN 4093</option><option>Independent study / project assistant</option><option>Other</option></select></div>
+      <div><label for="fsSel">Fact sheet</label><select id="fsSel"></select></div>
+      <div><label>Post-editing level</label><div class="small muted" style="padding-top:6px">Set by your quality score. If the DeepL output scores <b>below 90</b>, you complete <b>full post-editing</b> and a change log (Step 3).</div></div>
+    </div>
+    <div class="notice info small" id="fsInfo" style="margin-top:14px"></div>
+  </div>
+
+  <div class="card">
+    <h2>Severity guide</h2>
+    <table>
+      <tr><th style="width:150px">Severity</th><th>Use when…</th><th style="width:90px">Points</th></tr>
+      <tr><td><span class="pill sev-Critical">Critical</span></td><td>The error could lead to unsafe handling, exposure, a wrong dose or concentration, or noncompliance with the label.</td><td>25</td></tr>
+      <tr><td><span class="pill sev-Major">Major</span></td><td>Meaning changes or becomes unclear, and a reader is likely to misunderstand or need to reread.</td><td>5</td></tr>
+      <tr><td><span class="pill sev-Minor">Minor</span></td><td>Meaning is intact, but there is a grammar, convention, consistency or style problem a professional would fix.</td><td>1</td></tr>
+      <tr><td><span class="pill sev-Preferential">Preferential</span></td><td>The MT is acceptable and your change is a preference. Record it, but be careful not to over-edit.</td><td>0</td></tr>
+      <tr><td><span class="pill sev-Source">Source issue</span></td><td>The problem is in the English original, such as an arithmetic error or ambiguity. Query the author. This does not count against the MT.</td><td>0</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>Rubric</h2>
+    <p class="small muted">Your instructor will score your submission with this rubric.</p>
+    <div id="rubricTable"></div>
+  </div>
+
+  <div class="row no-print">
+    <div class="notice warn small hidden" id="resumeNote" style="margin:0"></div>
+    <span class="spacer"></span>
+    <button class="btn" id="startBtn">Start review</button>
+  </div>
+</section>
+
+<!-- STEP 1: SEGMENTS -->
+<section id="step1" class="hidden">
+  <div class="ws">
+    <aside class="seglist" id="segList"></aside>
+    <div>
+      <div class="card" id="segCard">
+        <div class="row">
+          <h2 id="segTitle" style="margin:0">Segment</h2>
+          <span class="muted small" id="segSection"></span>
+          <span class="spacer"></span>
+          <span class="small muted">Active time: <b class="timer" id="timerOut">0:00</b></span>
+        </div>
+
+        <div class="pane-label">English source</div>
+        <div class="pane src" id="srcPane"></div>
+
+        <div class="pane-label"><span>DeepL Spanish (MT): <span style="text-transform:none;font-weight:400">select a word or phrase, then click “Flag selection”</span></span>
+          <button class="btn small sec" id="flagSelBtn">Flag selection</button></div>
+        <div class="pane mt" id="mtPane"></div>
+        <div id="aiHint"></div>
+
+        <div class="pane-label"><span>Your post-edited Spanish</span>
+          <span><button class="btn small ghost" id="resetPeBtn" title="Restore the original MT">Reset to MT</button>
+          <span class="small" id="editDist" style="text-transform:none;font-weight:600"></span></span></div>
+        <textarea class="pe" id="peBox" spellcheck="true" lang="es"></textarea>
+
+        <div class="errform" id="errForm">
+          <h3 id="errFormTitle">Add an error</h3>
+          <div class="hidden"><select id="eCat"></select><select id="eSub"></select>
+            <select id="eSev"><option value="">Select…</option><option>Critical</option><option>Major</option><option>Minor</option><option>Preferential</option></select></div>
+          <div class="flbl">1 · Click the error type <a class="small" href="guide.html#types" target="_blank" rel="noopener" style="font-weight:400">examples ↗</a></div>
+          <div class="tgrid" id="typeGrid"></div>
+          <div class="tdef hidden" id="typeDef"></div>
+          <div class="flbl">2 · Click the severity <a class="small" href="guide.html#severity" target="_blank" rel="noopener" style="font-weight:400">severity helper ↗</a></div>
+          <div class="sevbtns" id="sevBtns"></div>
+          <div class="flbl">3 · Click the type of correction</div>
+          <div class="ctbtns" id="ctBtns"></div>
+          <div class="grid2" style="margin-top:10px">
+            <div><label for="eSpan">4 · MT text with the error <small>(exact words)</small></label><input type="text" id="eSpan"></div>
+            <div><label for="eFix">5 · Type your correction</label><input type="text" id="eFix" lang="es"></div>
+          </div>
+          <div style="margin-top:10px"><label for="eWhy">6 · Justification <small>(why this is an error; cite a source, label, or glossary if you used one)</small></label><textarea id="eWhy" style="min-height:56px"></textarea></div>
+          <div class="row" style="margin-top:10px">
+            <span class="small muted" id="errMsg"></span><span class="spacer"></span>
+            <button class="btn small sec hidden" id="cancelEditBtn">Cancel</button>
+            <button class="btn small" id="addErrBtn">Add error</button>
+          </div>
+        </div>
+
+        <div class="errlist" id="errList"></div>
+
+        <div class="seg-nav">
+          <button class="btn sec" id="prevBtn">← Previous</button>
+          <button class="btn sec" id="noErrBtn" title="Mark this segment as reviewed with no errors">✓ No errors in this segment</button>
+          <span class="spacer"></span>
+          <span class="small muted" id="savedNote"></span>
+          <button class="btn" id="nextBtn">Next →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STEP 2: AI REVIEW -->
+<section id="step2" class="hidden">
+  <div class="card">
+    <h1>Post-editing &amp; change log</h1>
+    <div class="gate" id="gate"></div>
+  </div>
+  <div class="card" id="fullPeCard">
+    <h2 id="fullPeTitle">Full post-editing</h2>
+    <p class="small muted" id="fullPeHelp"></p>
+    <label for="fullPe">Paste your fully post-edited version here:</label>
+    <textarea id="fullPe" lang="es" spellcheck="true" style="min-height:260px"></textarea>
+    <div class="row" style="margin-top:8px"><button class="btn small sec" id="fillPeBtn">Fill from my segment edits</button><span class="small muted" id="fullPeCount"></span></div>
+  </div>
+  <div class="card">
+    <h2>Post-editing change log</h2>
+    <p class="small muted">Every segment you changed appears here automatically. Write the reason for each change. Reasons start from your error justifications, so you can edit them. Use “Add row” for changes you made only in the Word file.</p>
+    <table id="logTable"><thead><tr><th style="width:11%">Segment-Line</th><th style="width:27%">Original MT</th><th style="width:27%">Edited Version</th><th>Reason for Change</th></tr></thead><tbody></tbody></table>
+    <div class="row" style="margin-top:10px"><button class="btn small sec" id="addLogBtn">+ Add row</button><span class="small muted" id="logCount"></span></div>
+  </div>
+  <div class="row"><button class="btn sec" data-go="1">← Back to segments</button><span class="spacer"></span><button class="btn" data-go="3">Continue →</button></div>
+</section>
+
+<section id="step3" class="hidden">
+  <div class="card">
+    <h1>Evaluate the ChatGPT review</h1>
+    <p>The project team generated an AI review of this translation. Treat it as a second opinion, not as an answer key. AI reviews can be right, partly right, or wrong. For each item, decide whether you <b>accept</b>, <b>modify</b>, or <b>reject</b> the suggestion, and explain why. If you modify it, write your own version.</p>
+    <div class="notice info small" id="aiProgress"></div>
+  </div>
+  <div id="aiItems"></div>
+  <div class="row"><button class="btn sec" data-go="2">← Back</button><span class="spacer"></span><button class="btn" data-go="4">Continue →</button></div>
+</section>
+
+<!-- STEP 3: MATERIALS & TIME -->
+<section id="step4" class="hidden">
+  <div class="card">
+    <h1>Missing source materials</h1>
+    <p>List any figures, tables, graphics, links, or other source materials that are missing, unreadable, or not editable, and that the Extension team needs to provide to complete the Spanish version.</p>
+    <table id="matTable"><thead><tr><th style="width:16%">Type</th><th style="width:20%">Location</th><th>What is missing or wrong</th><th style="width:26%">What we need from the team</th><th style="width:40px"></th></tr></thead><tbody></tbody></table>
+    <div class="row" style="margin-top:10px">
+      <button class="btn small sec" id="addMatBtn">+ Add item</button>
+      <label class="small" style="font-weight:500;margin:0"><input type="checkbox" id="noMat"> No missing materials found</label>
+    </div>
+  </div>
+
+  <div class="card">
+    <h1>Time log</h1>
+    <p>Record the minutes you spent on this fact sheet, including time outside this tool (for example, editing the Word file with Track Changes). The Extension team will use these numbers to estimate production time per document, so log what you actually spent.</p>
+    <table id="timeTable"><thead><tr><th>Activity</th><th style="width:140px">Minutes</th><th>Notes <small class="muted">(optional)</small></th></tr></thead><tbody></tbody>
+    <tfoot><tr><th>Total</th><th id="timeTotal">0 min</th><th class="small muted" id="timeAuto"></th></tr></tfoot></table>
+  </div>
+  <div class="row"><button class="btn sec" data-go="3">← Back</button><span class="spacer"></span><button class="btn" data-go="5">Continue →</button></div>
+</section>
+
+<!-- STEP 4: ASSESSMENT & SUBMIT -->
+<section id="step5" class="hidden">
+  <div class="card">
+    <h1>Summary of your review</h1>
+    <div class="grid3" id="statGrid" style="grid-template-columns:repeat(6,1fr)"></div>
+    <div id="catTable" style="margin-top:14px"></div>
+    <div class="notice warn small hidden" id="unreviewedNote"></div>
+  </div>
+
+  <div class="card">
+    <h1>Assessment for the Extension team</h1>
+    <div class="grid2">
+      <div><label for="aQuality">Overall quality of the DeepL output</label>
+        <select id="aQuality"><option value="">Select…</option>
+          <option>5 – Publishable with minimal edits</option><option>4 – Good; light post-editing needed</option>
+          <option>3 – Usable; full post-editing needed</option><option>2 – Poor; substantial rewriting needed</option>
+          <option>1 – Unusable; retranslation recommended</option></select></div>
+      <div><label for="aAudience">Recommended Spanish variant for this audience</label>
+        <select id="aAudience"><option value="">Select…</option>
+          <option>U.S. / Latin American Spanish (neutral)</option><option>Mexican Spanish</option><option>Peninsular Spanish (es-ES) as delivered</option><option>Other (explain below)</option></select></div>
+    </div>
+    <div style="margin-top:12px"><label for="aRecurring">Recurring translation issues <small>(patterns you saw more than once)</small></label><textarea id="aRecurring"></textarea></div>
+    <div style="margin-top:12px"><label for="aFormatting">Formatting needs <small>(what the layout or DTP stage must fix)</small></label><textarea id="aFormatting"></textarea></div>
+    <div style="margin-top:12px"><label for="aQueries">Questions for the author or Extension team <small>(source issues, terminology to confirm, approved wording)</small></label><textarea id="aQueries"></textarea></div>
+    <div style="margin-top:12px"><label for="aReflection">Reflection <small>(what you learned about MT post-editing on this fact sheet)</small></label><textarea id="aReflection"></textarea></div>
+  </div>
+
+  <div class="card">
+    <h1>Deliverable and submission</h1>
+    <div><label for="tcLink">Link to your Word file with Track Changes <small>(OneDrive / Google Drive / Box link; set sharing to USU)</small></label><input type="url" id="tcLink" placeholder="https://"></div>
+    <div style="margin-top:10px" class="small">
+      <label style="font-weight:500"><input type="checkbox" id="cTC"> My Word file shows all revisions with Track Changes, and the comments explain non-obvious edits.</label>
+      <label style="font-weight:500"><input type="checkbox" id="cNum"> I checked all numbers, units, calculations, figure references, and links against the English original.</label>
+      <label style="font-weight:500"><input type="checkbox" id="cOwn"> The error analysis and edits are my own work. Any AI suggestions I adopted are identified in Step 4.</label>
+    </div>
+    <div class="row no-print" style="margin-top:14px">
+      <button class="btn sec" data-go="4">← Back</button>
+      <span class="spacer"></span>
+      <button class="btn sec" id="copyPeBtn">Copy my post-edited Spanish</button>
+      <button class="btn sec" id="csvBtn">Download my report (CSV)</button>
+      <button class="btn" id="submitBtn">Submit to project sheet</button>
+    </div>
+    <div id="submitMsg"></div>
+  </div>
+</section>
+
+</main>
+<footer>
+  MTPE &amp; QA Review Tool © 2026 by Elsa Pérez, PhD · Center for Translation and Interpretation Studies, Utah State University · licensed under <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a>
+</footer>
+
+<script>
+/* ==================== INSTRUCTOR SETTINGS ==================== */
+const CONFIG = {
+  SCRIPT_URL: 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE',   // Web App URL ending in /exec
+  SUBMIT_TOKEN: 'CTIS-MTPE-2026-CHANGE-ME',          // must match SECRET_TOKEN in Code.gs
+  WEIGHTS: { Critical:25, Major:5, Minor:1, Preferential:0, Source:0 },
+  FULL_PE_THRESHOLD: 90                              // score below this → full post-editing + change log required
+};
+const FACTSHEETS = [];
+/* ============================================================
+   FACT SHEET DATA — one object per fact sheet.
+   To add a fact sheet, copy this object, change id/title, and
+   replace segments [section, English source, DeepL Spanish]
+   and aiReview items. Segment numbers are assigned automatically.
+   ============================================================ */
+FACTSHEETS.push({
+  id: "FS-01",
+  title: "Three Options for Mixing and Loading Spray Tanks",
+  authors: "Kalen Taylor, Cody Zesiger, Corey Ransom, Earl Creech, and Matt Yost",
+  published: "USU Extension · August 2022",
+  mtEngine: "DeepL",
+  targetLocale: "es-ES (DeepL output)",
+  segments: [
+    ["Title", "Three Options for Mixing and Loading Spray Tanks", "Tres opciones para mezclar y llenar los depósitos de pulverización"],
+    ["Title", "Kalen Taylor, Cody Zesiger, Corey Ransom, Earl Creech, and Matt Yost", "Kalen Taylor, Cody Zesiger, Corey Ransom, Earl Creech y Matt Yost"],
+    ["Introduction", "Introduction", "Introducción"],
+    ["Introduction", "Preparing a pesticide solution is sometimes confusing or intimidating.", "La preparación de una solución de plaguicida puede resultar a veces confusa o intimidante."],
+    ["Introduction", "The instructions for preparing the mixture in the spray tank are not always straight forward and the language is not always standardized.", "Las instrucciones para preparar la mezcla en el depósito de pulverización no siempre son claras y la terminología no siempre está estandarizada."],
+    ["Introduction", "However, the mixture must be prepared correctly for effective application, compliance, and safety.", "Sin embargo, la mezcla debe prepararse correctamente para garantizar una aplicación eficaz, el cumplimiento de la normativa y la seguridad."],
+    ["Introduction", "Making the effort to properly mix chemicals can save money and headaches in the long run.", "Esforzarse por mezclar adecuadamente los productos químicos puede ahorrar dinero y evitar problemas a largo plazo."],
+    ["Introduction", "This fact sheet provides simple guidelines for correctly and safely mixing and loading spray solutions.", "Esta ficha informativa ofrece pautas sencillas para mezclar y cargar soluciones de pulverización de forma correcta y segura."],
+    ["Safety Considerations", "Safety Considerations", "Consideraciones de seguridad"],
+    ["Safety Considerations", "Although pesticides can be highly effective, there can also be risk involved when using them.", "Aunque los plaguicidas pueden ser muy eficaces, su uso también puede conllevar riesgos."],
+    ["Safety Considerations", "This risk is highest during mixing when direct contact to concentrated product is most likely (MacFarlane et al., 2013).", "Este riesgo es mayor durante la mezcla, cuando es más probable el contacto directo con el producto concentrado (MacFarlane et al., 2013)."],
+    ["Safety Considerations", "When mixing in large tanks, like the 300-gallon tank on a spray truck pictured in Figure 1, start the sprayer engine to agitate the solution during mixing.", "Cuando se mezcle en depósitos grandes, como el depósito de 300 galones de un camión pulverizador que se muestra en la figura 1, se debe arrancar el motor del pulverizador para agitar la solución durante la mezcla."],
+    ["Safety Considerations", "This will help achieve an even mix while avoiding settling which can cause uneven application.", "Esto ayudará a conseguir una mezcla homogénea y evitará la sedimentación, que puede provocar una aplicación desigual."],
+    ["Safety Considerations", "Of utmost importance is following the product label while handling and mixing pesticides (Figure 2).", "Es de suma importancia seguir las instrucciones de la etiqueta del producto al manipular y mezclar plaguicidas (Figura 2)."],
+    ["Safety Considerations", "Nearly 97% of accidental human pesticide exposure comes through skin contact (Fishel, 2000).", "Casi el 97 % de la exposición accidental de las personas a los plaguicidas se produce por contacto con la piel (Fishel, 2000)."],
+    ["Safety Considerations", "The exposure risk can be minimized by using the required personal protective equipment (PPE) for the chemicals being mixed (Yarpuz-Bozdogan, 2018).", "El riesgo de exposición puede minimizarse utilizando el equipo de protección individual (EPI) requerido para los productos químicos que se estén mezclando (Yarpuz-Bozdogan, 2018)."],
+    ["Safety Considerations", "Always mix with adequate ventilation to prevent respiratory exposure to chemicals.", "Mezcle siempre con ventilación adecuada para evitar problemas respiratorios\n[Figura 1. Camión pulverizador para mezclar y aplicar plaguicidas en grandes superficies]\na sustancias químicas."],
+    ["Safety Considerations", "Triple rinse any container that is used to measure chemical products.", "Enjuague tres veces cualquier recipiente que se utilice para medir productos químicos."],
+    ["Safety Considerations", "When a bottle or jug is empty, dispose of it according to the product label.", "Cuando una botella o un bidón esté vacío, deséchelo según las instrucciones de la etiqueta del producto."],
+    ["Safety Considerations", "Typically, this includes rinsing and cutting a hole in the bottom to prevent re-use.", "Por lo general, esto incluye enjuagarlo y hacer un agujero en el fondo para evitar su reutilización."],
+    ["Figures", "Figure 1. Spray Truck for Mixing and Applying Pesticides Over Large Areas", "Figura 1. Camión pulverizador para mezclar y aplicar plaguicidas en grandes superficies"],
+    ["Figures", "Figure 2. Carefully Measure All Products in Approved Containers", "Figura 2. Mida cuidadosamente todos los productos en recipientes homologados"],
+    ["Three Options", "Following are three options for safely mixing and loading spray tanks.", "A continuación se presentan tres opciones para mezclar y cargar de forma segura los depósitos de pulverización."],
+    ["Option 1", "Option 1: Mixing for a Full Tank", "Opción 1: Mezcla para un depósito lleno"],
+    ["Option 1", "1. Finding the number of acres treated per tank can be calculated by dividing the tank capacity by the application rate.", "El número de acres tratados por depósito se puede calcular dividiendo la capacidad del depósito por la dosis de aplicación."],
+    ["Option 1", "Example: 30-gallon tank divided by 15 gallons/acre (application rate) = 2 acres", "Ejemplo: depósito de 30 galones dividido entre 15 galones/acre (dosis de aplicación) = 2 acres"],
+    ["Option 1", "2. To calculate the amount of chemical product you should add per tank, multiply the number of acres treated per tank by the amount of chemical product listed on the label in units of product per acre.", "Para calcular la cantidad de producto químico que debe añadir por depósito, multiplique el número de acres tratados por depósito por la cantidad de producto químico indicada en la etiqueta en unidades de producto por acre."],
+    ["Option 1", "Example: 2 acres x 2 quarts/acre = 4 quarts of product added to the tank", "Ejemplo: 2 acres × 2 cuartos de galón por acre = 4 cuartos de galón de producto añadidos al depósito"],
+    ["Option 1", "3. Add the calculated amount of product and water needed to fill the tank.", "Añada la cantidad calculada de producto y el agua necesaria para llenar el depósito."],
+    ["Option 1", "Example: 4 quarts (1 gallon) of product and 29 gallons of water for 30 gallons", "Ejemplo: 4 cuartos de galón (1 galón) de producto y 29 galones de agua para 30 galones"],
+    ["Option 2", "Option 2: Mixing by the Gallon", "Opción 2: Mezcla por galón"],
+    ["Option 2", "1. Calculate the amount of product per gallon by dividing the labeled product rate per acre (ounces, quarts, or pounds per acre) by the application rate (gallon per acre).", "Calcule la cantidad de producto por galón dividiendo la dosis indicada en la etiqueta por acre (onzas, cuartos de galón o libras por acre) entre la dosis de aplicación (galones por acre)."],
+    ["Option 2", "Example: 32 ounces (1 quart)/30 = 1.07 ounces of product per gallon", "Ejemplo: 32 onzas (1 cuarto de galón)/30 = 1,07 onzas de producto por galón"],
+    ["Option 2", "2. Multiply product per gallon by gallons of solution to be used.", "Multiplique la cantidad de producto por galón por los galones de solución que se vayan a utilizar."],
+    ["Option 2", "Example: 1.07 ounces x 2.5 gallons = 2.7 ounces", "Ejemplo: 1,07 onzas × 2,5 galones = 2,7 onzas"],
+    ["Option 3", "Option 3: Mix for a Percent (%) of Product", "Opción 3: Mezcla para obtener un porcentaje (%) de producto"],
+    ["Option 3", "1. Write down the desired solution percentage found on the label as a decimal.", "Anote el porcentaje de solución deseado que figura en la etiqueta en forma de decimal."],
+    ["Option 3", "Example: 2.0% = 0.02 in decimal form", "Ejemplo: 2,0 % = 0,02 en forma decimal"],
+    ["Option 3", "2. Multiply 128 ounces by the desired solution decimal number.", "Multiplica 128 onzas por el número decimal de la solución deseada."],
+    ["Option 3", "Example: 128 ounces x 0.02 = 2.6 ounces per gallon mix", "Ejemplo: 128 onzas × 0,02 = 2,6 onzas por galón de mezcla"],
+    ["Option 3", "3. Multiply ounces by desired gallons to be used in the tank.", "Multiplica las onzas por el número de galones que desees utilizar en el depósito."],
+    ["Option 3", "Example: 2.6 ounces x 25 gallon = 65 ounces product per 25-gallon tank load", "Ejemplo: 2,6 onzas × 25 galones = 65 onzas de producto por cada carga de 25 galones del depósito"],
+    ["Conclusion", "Conclusion", "Conclusión"],
+    ["Conclusion", "Whether preparing a large tank or a small tank, the same guidelines and safety considerations apply to mixing pesticides.", "Tanto si se prepara un depósito grande como uno pequeño, se aplican las mismas directrices y consideraciones de seguridad a la hora de mezclar plaguicidas."],
+    ["Conclusion", "When it is time to mix, first determine the tank size and rate of the product or products being mixed.", "A la hora de realizar la mezcla, determine primero el tamaño del depósito y la dosis del producto o productos que se van a mezclar."],
+    ["Conclusion", "Once you obtain those two numbers, any of the three options presented above will work to achieve the correct ratio of chemical to water.", "Una vez que obtenga esas dos cifras, cualquiera de las tres opciones presentadas anteriormente servirá para lograr la proporción correcta de producto químico y agua."],
+    ["Conclusion", "Although this fact sheet provides guidelines for tank-mixing calculations, anyone mixing pesticides should always read and follow the label.", "Aunque esta ficha informativa proporciona directrices para los cálculos de mezclas en depósito, cualquier persona que mezcle plaguicidas debe leer y seguir siempre las instrucciones de la etiqueta."],
+    ["References", "References", "Referencias"],
+    ["References", "Fishel, F. (2000). Personal protective equipment for working with pesticides [Fact sheet, Publication G1917]. University of Missouri. https://extension.missouri.edu/publications/g1917.", "Fishel, F. (2000). Equipo de protección individual para trabajar con plaguicidas [Ficha técnica, Publicación G1917]. Universidad de Missouri. https://extension.missouri.edu/publications/g1917."],
+    ["References", "MacFarlane, E., Carey, R., Keegel, T., El-Zaemay, S., & Fritschi, L. (2013). Dermal exposure associated with occupational end use of pesticides and the role of protective measures. Safety and Health at Work, 4(3), 136–141.", "MacFarlane, E., Carey, R., Keegel, T., El-Zaemay, S. y Fritschi, L. (2013). Exposición cutánea asociada al uso final profesional de plaguicidas y el papel de las medidas de protección. Safety and Health at Work, 4(3), 136-141."],
+    ["References", "Yarpuz-Bozdogan, N. (2018). The importance of personal protective equipment in pesticide applications in agriculture. Current Opinion in Environmental Science & Health, 4, 1–4.", "Yarpuz-Bozdogan, N. (2018). La importancia del equipo de protección individual en la aplicación de plaguicidas en la agricultura. Current Opinion in Environmental Science & Health, 4, 1–4."],
+    ["Back matter", "Utah State University is an affirmative action/equal opportunity institution and is committed to a learning and working environment free from discrimination, including harassment. For USU’s non-discrimination notice, see equity.usu.edu/non-discrimination.", "La Universidad Estatal de Utah es una institución que aplica políticas de acción afirmativa e igualdad de oportunidades y está comprometida con un entorno de aprendizaje y de trabajo libre de discriminación, incluido el acoso. Para consultar la declaración de no discriminación de la USU, visite equity.usu.edu/non-discrimination."],
+    ["Back matter", "Published August 2022 · Utah State University · Peer-reviewed fact sheet", "Publicado en agosto de 2022. Universidad Estatal de Utah. Ficha informativa revisada por pares."]
+  ],
+  /* ChatGPT review items. "seg" = segment numbers the item refers to (1-based). */
+  aiReview: [
+    { seg:[17], group:"Meaning and calculation", title:"Repair the exposure sentence",
+      current:"“problemas respiratorios a sustancias químicas.”",
+      suggestion:"Realice la mezcla y la carga en un lugar bien ventilado para evitar la exposición por inhalación a los productos químicos.",
+      why:"The current sentence does not express a complete relationship. Keep protective equipment and label requirements in the same context." },
+    { seg:[32,33], group:"Meaning and calculation", title:"Show units in Option 2",
+      current:"32 ounces per acre divided by 30, with units unclear.",
+      suggestion:"32 fl oz/acre ÷ 30 gal/acre = 1,0667 fl oz de producto por galón de mezcla.",
+      why:"The acre units cancel; the result is product per gallon of final spray mixture. Preserve ounce or pound measurement bases specified by the label rather than treating weight ounces as liquid ounces." },
+    { seg:[40,42], group:"Meaning and calculation", title:"Correct premature rounding in Option 3",
+      current:"128 × 0.02 = 2.6; 2.6 × 25 = 65 ounces.",
+      suggestion:"128 × 0,02 = 2,56 fl oz/gal; 2,56 × 25 = 64 fl oz. Redondee al final.",
+      why:"The source also gives 65 because it rounds early. This is a source arithmetic issue. The exact result for the stated volume percentage and 25 U.S. gallons is 64 fl oz." },
+    { seg:[29,30,41,42], group:"Meaning and calculation", title:"Make final tank volume explicit",
+      current:"Instructions can be read as adding the full water volume plus product.",
+      suggestion:"Prepare 25 galones estadounidenses de mezcla final, incluido el volumen del producto.",
+      why:"A final concentration calculation assumes a final mixture volume. Do not imply adding 25 gallons of water and then extra product. Apply the same clarity to the 30 gallon example." },
+    { seg:[37,38], group:"Clarity and editorial", title:"Define the percentage basis",
+      current:"A 2% mixture is discussed without a full basis explanation.",
+      suggestion:"Para este ejemplo, 2 % significa 2 partes de producto por cada 100 partes de mezcla final, medidas por volumen.",
+      why:"Ask the author to confirm this volume-by-volume assumption. Percent active ingredient and percent by mass are different calculations." },
+    { seg:[46], group:"Clarity and editorial", title:"Explain when to use each approach",
+      current:"Three options are presented together.",
+      suggestion:"Seleccione el cálculo que corresponda a la dosis o concentración indicada en la etiqueta y a la tasa de aplicación calibrada.",
+      why:"Do not imply that all options are interchangeable for every product. Retain the source’s direction to calibrate the sprayer before mixing." },
+    { seg:[39,41,1,16], group:"Clarity and editorial", title:"Standardize reader address and vocabulary",
+      current:"“Multiplica” alongside “Calcule”; tanques and depósitos; EPI.",
+      suggestion:"Multiplique; calcule. Use tanque de pulverización consistently and define equipo de protección personal.",
+      why:"EPI is valid Spanish; EPP may suit a Latin American audience. This is an audience choice. Avoid changing product names or approved label wording." },
+    { seg:[35,49,50,51,52], group:"Clarity and editorial", title:"Verify examples and production details",
+      current:"The 1.07 × 2.5 result is approximately 2.7; other numbers contain inserted spaces.",
+      suggestion:"Retain sufficient intermediate precision and round final measurement appropriately.",
+      why:"Check all rates, totals, final volume labels, decimal separators, figure references, and units. Preserve original English reference titles for retrieval, optionally followed by Spanish translations. Use approved USU Spanish institutional wording for the closing notice." }
+  ]
+});
+
+
+const CATS = {
+  'Accuracy': ['Mistranslation','Omission','Addition','Numbers, units & calculations','Untranslated text'],
+  'Terminology': ['Incorrect term','Term not suited to the field or audience'],
+  'Readability': ['Unclear or awkward wording','Grammar','Spelling & punctuation','Not plain language'],
+  'Consistency': ['Inconsistent term','Inconsistent form of address (tú/usted)','Inconsistent capitalization or style'],
+  'Cultural & linguistic appropriateness': ['Regional variant (es-ES vs. U.S. Spanish)','Locale conventions (decimals, units, dates)','Register or cultural fit'],
+  'Formatting': ['Layout or segmentation break','Figure, table, or caption','Lists, headings, or references'],
+  'Source issue (no penalty)': ['Error in the English source','Ambiguity: query the author']
+};
+const SRC_CAT = 'Source issue (no penalty)';
+const DEFS = {"Mistranslation": "The Spanish conveys a different meaning from the English. In technical texts this often comes from a word with several meanings, such as “rate” or “drift”.", "Omission": "Information in the English is missing in the Spanish. Check time limits, quantities, negations, and conditions especially carefully.", "Addition": "The Spanish adds information, emphasis, or instructions that are not in the English.", "Numbers, units & calculations": "Numbers, decimal separators, units, or results differ from the English or are wrong. Recalculate every example.", "Untranslated text": "English words are left in the Spanish where they should be translated. Proper names, product names, and URLs are the exception.", "Incorrect term": "The word exists but is not the accepted term in the field.", "Term not suited to the field or audience": "The term is technically correct but too scientific, or unfamiliar to the people who will read the fact sheet.", "Unclear or awkward wording": "The sentence is grammatically possible but follows English structure (a calque) and sounds unnatural or confusing.", "Grammar": "Agreement, verb form, prepositions, or other grammar errors.", "Spelling & punctuation": "Accents, opening question and exclamation marks, capitalization within sentences, typos.", "Not plain language": "The register is more formal or bureaucratic than the English, which makes it harder to read.", "Inconsistent term": "One concept is translated with different words in different places, so readers may think they are different things.", "Inconsistent form of address (tú/usted)": "The text switches between usted and tú. Extension fact sheets use usted.", "Inconsistent capitalization or style": "Headings, titles, or labels follow English capitalization or switch styles.", "Regional variant (es-ES vs. U.S. Spanish)": "The word or form is fine in Spain but unusual, confusing, or inappropriate for most U.S. Spanish speakers.", "Locale conventions (decimals, units, dates)": "Dates, number formats, or units follow a convention readers will misread.", "Register or cultural fit": "The tone is too casual, too formal, or not culturally natural for a public institutional text.", "Layout or segmentation break": "A sentence or list item is split, merged, or interrupted by another element during conversion.", "Figure, table, or caption": "Caption numbers, labels, table headers, or text inside images do not match the source or are untranslated.", "Lists, headings, or references": "Numbering, heading levels, or reference entries are lost or changed.", "Error in the English source": "The English contains an arithmetic, factual, or reference error. Translate the intended meaning only after the author confirms it.", "Ambiguity: query the author": "The English can be read two ways and the choice changes the Spanish."};
+const CORR_TYPES = ['Replace (substitute)','Insert (add missing)','Delete (remove)','Reorder','Rewrite segment','Query author (no change)'];
+const SEV_LIST = ['Critical','Major','Minor','Preferential'];
+const TIME_ACTS = ['Translation review (reading source and MT)','Post-editing / Track Changes in Word','Formatting and layout','Research and terminology work','Communication with the Extension team','Other'];
+const RUBRIC = [
+  {c:'Error identification (accuracy)', w:25, l:['Finds all critical and major meaning, number, unit, and safety errors; distinguishes source issues from MT errors.','Finds nearly all critical and major errors; misses minor ones only.','Misses one or more major errors or misclassifies source issues as MT errors.','Misses critical errors (dose, safety, calculation) or flags few real errors.']},
+  {c:'Classification & severity', w:15, l:['Focus area, error type, and severity are accurate and consistent; justifications are specific and cite sources where needed.','Mostly accurate; a few severity or category choices are debatable.','Frequent misclassification or vague justifications.','Categories and severities are largely missing or wrong.']},
+  {c:'Quality of proposed edits', w:20, l:['Edits fix the error, are idiomatic and plain-language, introduce no new errors, and avoid over-editing.','Edits are correct, with occasional awkwardness or unnecessary preferential changes.','Some edits are incomplete or introduce new problems; noticeable over- or under-editing.','Edits are often wrong or the MT is left uncorrected.']},
+  {c:'Terminology, consistency & audience', w:15, l:['Consistent field terminology and usted throughout; variant choices fit a U.S. Spanish-speaking audience and are justified.','Mostly consistent; minor lapses.','Several inconsistencies in terms, address, or variant.','Little attention to terminology, consistency, or audience.']},
+  {c:'Critical use of the AI review', w:10, l:['Every AI item is evaluated; decisions are well reasoned, and incorrect or overreaching suggestions are identified.','All items evaluated with reasonable justifications.','Some items evaluated superficially or accepted without reasoning.','AI suggestions are accepted wholesale or not evaluated.']},
+  {c:'Formatting & missing materials', w:5, l:['Identifies all layout, caption, figure, and reference issues and gives clear requests to the team.','Identifies most formatting issues and missing items.','Identifies few formatting issues; requests are unclear.','Formatting and missing materials are not addressed.']},
+  {c:'Documentation & professionalism', w:10, l:['Track Changes file is complete and commented; time log is detailed; assessment is useful to the client.','Deliverables complete with minor gaps.','A deliverable is incomplete or the time log is vague.','Track Changes file or time log is missing.']}
+];
+const LEVELS = ['Exemplary (4)','Proficient (3)','Developing (2)','Beginning (1)'];
+
+/* ==================== STATE ==================== */
+let FS = null;
+let S = null;          // per-fact-sheet working state
+let cur = 0;           // current segment index
+let editingErr = null; // error id being edited
+let lastTick = Date.now();
+let idleAt = Date.now();
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+function store(k, v){ try{ if(v===undefined) return localStorage.getItem(k); localStorage.setItem(k, v); }catch(e){ return null; } }
+function storeKey(){ return 'ctis-mtpe-' + FS.id; }
+
+function freshState(){
+  return {
+    startedAt: new Date().toISOString(),
+    activeSec: 0,
+    segs: FS.segments.map(s => ({ pe: s[2], reviewed: false, sec: 0 })),
+    errors: [],
+    ai: FS.aiReview.map(() => ({ decision:'', comment:'', version:'' })),
+    mats: [],
+    noMat: false,
+    time: TIME_ACTS.map(() => ({ min:'', note:'' })),
+    a: {}, nextId: 1, submitted: false,
+    fullPe: '', log: {}, extraLog: []
+  };
+}
+function save(){
+  if(!FS || !S) return;
+  collectForms();
+  store(storeKey(), JSON.stringify({ S, student: studentInfo() }));
+  const n = $('savedNote'); if(n){ n.textContent = 'Draft saved on this device'; }
+}
+function load(){
+  const raw = store(storeKey());
+  if(!raw) return null;
+  try { return JSON.parse(raw); } catch(e){ return null; }
+}
+function studentInfo(){
+  return { name: $('stName').value.trim(), id: $('stId').value.trim().toUpperCase(), email: $('stEmail').value.trim(), course: $('stCourse').value };
+}
+
+/* ==================== INIT ==================== */
+function init(){
+  const sel = $('fsSel');
+  FACTSHEETS.forEach((f,i) => { const o = document.createElement('option'); o.value = i; o.textContent = f.id + ' — ' + f.title; sel.appendChild(o); });
+  sel.addEventListener('change', () => pickFS(+sel.value));
+  pickFS(0);
+  renderRubric();
+
+  const catSel = $('eCat');
+  catSel.innerHTML = '<option value="">Select…</option>' + Object.keys(CATS).map(c => `<option>${esc(c)}</option>`).join('');
+  catSel.addEventListener('change', onCatChange);
+  onCatChange();
+  buildEntryButtons();
+
+  document.querySelectorAll('nav.steps button').forEach(b => b.addEventListener('click', () => go(+b.dataset.step)));
+  document.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', () => go(+b.dataset.go)));
+  $('startBtn').addEventListener('click', start);
+  $('prevBtn').addEventListener('click', () => showSeg(cur-1));
+  $('nextBtn').addEventListener('click', () => { if(cur < FS.segments.length-1) showSeg(cur+1); else go(2); });
+  $('fillPeBtn').addEventListener('click', () => { collectForms(); $('fullPe').value = S.segs.map(s => s.pe).join('\n\n'); S.fullPe = $('fullPe').value; updPeCount(); save(); });
+  $('fullPe').addEventListener('input', updPeCount);
+  $('addLogBtn').addEventListener('click', () => { collectForms(); S.extraLog.push({line:'Word file',mt:'',ed:'',why:''}); renderLog(); });
+  $('noErrBtn').addEventListener('click', markNoErrors);
+  $('addErrBtn').addEventListener('click', addOrUpdateErr);
+  $('cancelEditBtn').addEventListener('click', resetErrForm);
+  $('flagSelBtn').addEventListener('click', flagSelection);
+  $('resetPeBtn').addEventListener('click', () => { if(confirmReset()){ $('peBox').value = FS.segments[cur][2]; onPeInput(); } });
+  $('peBox').addEventListener('input', onPeInput);
+  $('addMatBtn').addEventListener('click', () => { collectForms(); S.mats.push({type:'Figure',loc:'',what:'',need:''}); $('noMat').checked = false; S.noMat=false; renderMats(); });
+  $('noMat').addEventListener('change', e => { S.noMat = e.target.checked; save(); });
+  $('submitBtn').addEventListener('click', submit);
+  $('csvBtn').addEventListener('click', downloadCSV);
+  $('copyPeBtn').addEventListener('click', copyPE);
+
+  ['mousemove','keydown','click','scroll'].forEach(ev => document.addEventListener(ev, () => { idleAt = Date.now(); }, {passive:true}));
+  setInterval(tick, 1000);
+  setInterval(save, 20000);
+  window.addEventListener('beforeunload', save);
+}
+function confirmReset(){ return window.confirm ? true : true; }
+
+function pickFS(i){
+  FS = FACTSHEETS[i];
+  const words = FS.segments.reduce((n,s) => n + countWords(s[1]), 0);
+  $('fsInfo').innerHTML = `<b>${esc(FS.title)}</b><br>${esc(FS.authors)} · ${esc(FS.published)}<br>${FS.segments.length} segments · ${words} source words · MT: ${esc(FS.mtEngine)}, ${esc(FS.targetLocale)}`;
+  $('hdrMeta').innerHTML = esc(FS.id) + ' · ' + esc(FS.title) + '<br>Elsa Pérez, PhD · CTIS';
+  const saved = load();
+  if(saved && saved.S){
+    S = saved.S;
+    if(S.fullPe === undefined){ S.fullPe = ''; S.log = {}; S.extraLog = []; }
+    const st = saved.student || {};
+    if(st.name) $('stName').value = st.name; if(st.id) $('stId').value = st.id;
+    if(st.email) $('stEmail').value = st.email; if(st.course) $('stCourse').value = st.course;
+    $('resumeNote').classList.remove('hidden');
+    $('resumeNote').innerHTML = S.submitted ? 'You already submitted this fact sheet from this device. You can review your work or resubmit; the instructor sees every submission.' : 'A saved draft was found on this device. “Start review” will resume it.';
+    $('startBtn').textContent = 'Resume review';
+  } else {
+    S = freshState();
+    $('resumeNote').classList.add('hidden');
+    $('startBtn').textContent = 'Start review';
+  }
+}
+
+function renderRubric(){
+  let h = '<table class="rub"><tr><th>Criterion</th>' + LEVELS.map(l => `<th>${l}</th>`).join('') + '</tr>';
+  RUBRIC.forEach(r => { h += `<tr><td>${esc(r.c)}<br><span class="muted small">${r.w}%</span></td>` + r.l.map(x => `<td>${esc(x)}</td>`).join('') + '</tr>'; });
+  $('rubricTable').innerHTML = h + '</table>';
+}
+
+function start(){
+  const st = studentInfo();
+  const miss = [];
+  if(!st.name) miss.push('name');
+  if(!/^A\d{8}$/.test(st.id)) miss.push('A-number (A followed by 8 digits)');
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(st.email)) miss.push('email');
+  if(!st.course) miss.push('course / role');
+  if(miss.length){ alertBox('Please complete: ' + miss.join(', ') + '.'); return; }
+  document.querySelectorAll('nav.steps button').forEach(b => b.disabled = false);
+  save();
+  go(1);
+}
+function alertBox(msg){
+  let n = $('startMsg');
+  if(!n){ n = document.createElement('div'); n.id = 'startMsg'; n.className = 'notice err'; $('startBtn').parentNode.parentNode.insertBefore(n, $('startBtn').parentNode); }
+  n.textContent = msg;
+}
+
+function go(step){
+  if(step > 0 && document.querySelector('nav.steps button[data-step="1"]').disabled) return;
+  collectForms();
+  for(let i=0;i<6;i++){ $('step'+i).classList.toggle('hidden', i!==step); }
+  document.querySelectorAll('nav.steps button').forEach(b => b.classList.toggle('active', +b.dataset.step===step));
+  if(step===1){ renderSegList(); showSeg(cur); }
+  if(step===2) renderPE();
+  if(step===3) renderAI();
+  if(step===4){ renderMats(); renderTime(); }
+  if(step===5) renderSummary(true);
+  window.scrollTo(0,0);
+  save();
+}
+
+/* ==================== TIMER ==================== */
+function tick(){
+  const now = Date.now();
+  const visible = document.visibilityState === 'visible';
+  const active = visible && (now - idleAt) < 120000; // idle after 2 min
+  if(S && active && !$('step0').classList.contains('hidden') === false){
+    const d = Math.round((now - lastTick)/1000);
+    if(d > 0 && d < 5){
+      S.activeSec += d;
+      if(!$('step1').classList.contains('hidden')) S.segs[cur].sec += d;
+    }
+  }
+  lastTick = now;
+  const t = $('timerOut'); if(t && S) t.textContent = fmtTime(S.activeSec);
+}
+function fmtTime(s){ const h = Math.floor(s/3600), m = Math.floor((s%3600)/60), x = s%60; return (h? h+':'+String(m).padStart(2,'0') : m) + ':' + String(x).padStart(2,'0'); }
+
+/* ==================== SEGMENTS ==================== */
+function segErrors(i){ return S.errors.filter(e => e.seg === i+1); }
+function segStatus(i){
+  const errs = segErrors(i).filter(e => e.sev !== 'Source');
+  if(errs.some(e => e.sev==='Critical')) return 'crit';
+  if(errs.length) return 'err';
+  if(S.segs[i].reviewed) return 'ok';
+  return '';
+}
+function renderSegList(){
+  let h = '', lastSec = '';
+  const done = S.segs.filter((s,i) => s.reviewed || segErrors(i).length).length;
+  h += `<div class="sechead">Progress: ${done}/${FS.segments.length} reviewed</div><div class="progress"><i style="width:${Math.round(done/FS.segments.length*100)}%"></i></div>`;
+  FS.segments.forEach((s,i) => {
+    if(s[0] !== lastSec){ h += `<div class="sechead">${esc(s[0])}</div>`; lastSec = s[0]; }
+    const n = segErrors(i).length;
+    h += `<button data-i="${i}" class="${i===cur?'cur':''}"><span class="dot ${segStatus(i)}"></span><span class="num">${i+1}</span><span class="txt">${esc(s[1])}</span>${n?`<span class="small muted">${n}</span>`:''}</button>`;
+  });
+  $('segList').innerHTML = h;
+  $('segList').querySelectorAll('button').forEach(b => b.addEventListener('click', () => showSeg(+b.dataset.i)));
+}
+function showSeg(i){
+  if(i < 0 || i >= FS.segments.length) return;
+  collectForms();
+  cur = i;
+  const s = FS.segments[i];
+  $('segTitle').textContent = 'Segment ' + (i+1) + ' of ' + FS.segments.length;
+  $('segSection').textContent = s[0];
+  $('srcPane').textContent = s[1];
+  $('peBox').value = S.segs[i].pe;
+  $('peBox').dataset.seg = String(i);
+  renderMT(); renderErrs(); onPeInput(true);
+  const related = FS.aiReview.map((a,k) => ({a,k})).filter(x => x.a.seg.includes(i+1));
+  $('aiHint').innerHTML = related.length ? `<div class="ai-hint">💬 The ChatGPT review comments on this segment (${related.map(x => '“'+esc(x.a.title)+'”').join(', ')}). Form your own judgment first; you will evaluate the AI review in Step 4.</div>` : '';
+  $('prevBtn').disabled = i===0;
+  $('nextBtn').textContent = i===FS.segments.length-1 ? 'Finish segments →' : 'Next →';
+  $('noErrBtn').textContent = S.segs[i].reviewed && !segErrors(i).length ? '✓ Marked: no errors' : '✓ No errors in this segment';
+  resetErrForm();
+  renderSegList();
+  const curBtn = $('segList').querySelector('button.cur'); if(curBtn) curBtn.scrollIntoView({block:'nearest'});
+}
+function renderMT(){
+  const mt = FS.segments[cur][2];
+  const ranges = [];
+  segErrors(cur).slice().sort((a,b) => b.span.length - a.span.length).forEach(e => {
+    if(!e.span) return;
+    let from = 0, idx;
+    while((idx = mt.indexOf(e.span, from)) !== -1){
+      const end = idx + e.span.length;
+      if(!ranges.some(r => idx < r.end && end > r.start)){ ranges.push({start:idx, end, sev:e.sev, id:e.id}); break; }
+      from = idx + 1;
+    }
+  });
+  ranges.sort((a,b) => a.start - b.start);
+  let h = '', p = 0;
+  ranges.forEach(r => { h += esc(mt.slice(p, r.start)) + `<mark class="${r.sev}" title="Error #${r.id}">` + esc(mt.slice(r.start, r.end)) + '</mark>'; p = r.end; });
+  h += esc(mt.slice(p));
+  $('mtPane').innerHTML = h;
+}
+function flagSelection(){
+  const sel = window.getSelection();
+  const txt = sel ? sel.toString().trim() : '';
+  if(!txt || !$('mtPane').contains(sel.anchorNode)){ $('errMsg').textContent = 'Select text in the DeepL pane first.'; return; }
+  $('eSpan').value = txt;
+  $('eFix').value = '';
+  $('eCat').focus();
+  $('errMsg').textContent = '';
+  $('errForm').scrollIntoView({block:'nearest', behavior:'smooth'});
+}
+function onCatChange(){
+  const c = $('eCat').value;
+  $('eSub').innerHTML = '<option value="">Select…</option>' + (CATS[c] || []).map(x => `<option>${esc(x)}</option>`).join('');
+  const isSrc = c === SRC_CAT;
+  $('eSev').disabled = isSrc;
+  if(isSrc) $('eSev').value = '';
+}
+function buildEntryButtons(){
+  $('typeGrid').innerHTML = Object.keys(CATS).map(c => `<div class="ta"><b>${esc(c)}</b>${CATS[c].map(s => `<button type="button" class="tchip" data-c="${esc(c)}" data-s="${esc(s)}">${esc(s)}</button>`).join('')}</div>`).join('');
+  $('typeGrid').querySelectorAll('.tchip').forEach(b => b.addEventListener('click', () => { $('eCat').value = b.dataset.c; onCatChange(); $('eSub').value = b.dataset.s; syncEntryButtons(); }));
+  $('sevBtns').innerHTML = SEV_LIST.map(s => `<button type="button" data-sev="${s}">${s}</button>`).join('');
+  $('sevBtns').querySelectorAll('button').forEach(b => b.addEventListener('click', () => { $('eSev').value = b.dataset.sev; syncEntryButtons(); }));
+  $('ctBtns').innerHTML = CORR_TYPES.map(s => `<button type="button" data-ct="${esc(s)}">${esc(s)}</button>`).join('');
+  $('ctBtns').querySelectorAll('button').forEach(b => b.addEventListener('click', () => { curCT = b.dataset.ct; syncEntryButtons(); }));
+}
+let curCT = '';
+function syncEntryButtons(){
+  const c = $('eCat').value, s = $('eSub').value, sev = $('eSev').value, isSrc = c === SRC_CAT;
+  $('typeGrid').querySelectorAll('.tchip').forEach(b => b.classList.toggle('on', b.dataset.c === c && b.dataset.s === s));
+  $('sevBtns').querySelectorAll('button').forEach(b => { b.disabled = isSrc; b.classList.toggle('on', !isSrc && b.dataset.sev === sev); });
+  $('ctBtns').querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.ct === curCT));
+  const d = DEFS[s];
+  $('typeDef').classList.toggle('hidden', !d);
+  $('typeDef').innerHTML = d ? `<b>${esc(s)}:</b> ${esc(d)}${isSrc ? ' <i>Source issues carry no severity.</i>' : ''}` : '';
+}
+function addOrUpdateErr(){
+  const cat = $('eCat').value, sub = $('eSub').value, span = $('eSpan').value.trim(), fix = $('eFix').value.trim(), why = $('eWhy').value.trim();
+  const sev = cat === SRC_CAT ? 'Source' : $('eSev').value;
+  const miss = [];
+  if(!cat) miss.push('focus area'); if(!sub) miss.push('error type'); if(!sev) miss.push('severity');
+  if(!curCT) miss.push('type of correction');
+  if(!span) miss.push('MT text'); if(!why) miss.push('justification');
+  if(!fix && cat !== SRC_CAT && curCT.indexOf('Query') !== 0) miss.push('correction');
+  if(miss.length){ $('errMsg').textContent = 'Missing: ' + miss.join(', ') + '.'; return; }
+  if(editingErr){
+    Object.assign(S.errors.find(e => e.id === editingErr), {cat, sub, sev, span, fix, why, ct:curCT});
+  } else {
+    S.errors.push({ id: S.nextId++, seg: cur+1, cat, sub, sev, span, fix, why, ct:curCT });
+  }
+  S.segs[cur].reviewed = true;
+  resetErrForm(); renderErrs(); renderMT(); renderSegList(); save();
+}
+function resetErrForm(){
+  editingErr = null;
+  ['eSpan','eFix','eWhy'].forEach(id => $(id).value = '');
+  $('eCat').value = ''; onCatChange(); $('eSev').value = ''; curCT = ''; syncEntryButtons();
+  $('errFormTitle').textContent = 'Add an error';
+  $('addErrBtn').textContent = 'Add error';
+  $('cancelEditBtn').classList.add('hidden');
+  $('errMsg').textContent = '';
+}
+function editErr(id){
+  const e = S.errors.find(x => x.id === id); if(!e) return;
+  editingErr = id;
+  $('eCat').value = e.cat; onCatChange(); $('eSub').value = e.sub;
+  if(e.sev !== 'Source') $('eSev').value = e.sev;
+  $('eSpan').value = e.span; $('eFix').value = e.fix; $('eWhy').value = e.why; curCT = e.ct || ''; syncEntryButtons();
+  $('errFormTitle').textContent = 'Edit error #' + id;
+  $('addErrBtn').textContent = 'Save changes';
+  $('cancelEditBtn').classList.remove('hidden');
+  $('errForm').scrollIntoView({block:'nearest', behavior:'smooth'});
+}
+function delErr(id){
+  S.errors = S.errors.filter(e => e.id !== id);
+  if(editingErr === id) resetErrForm();
+  renderErrs(); renderMT(); renderSegList(); save();
+}
+function renderErrs(){
+  const errs = segErrors(cur);
+  $('errList').innerHTML = errs.length ? '<h3 style="margin-top:14px">Errors in this segment</h3>' + errs.map(e => `
+    <div class="err ${e.sev}">
+      <div class="row"><span class="pill sev-${e.sev}">${e.sev==='Source'?'Source issue':e.sev}</span><b>${esc(e.cat)}</b><span class="muted">› ${esc(e.sub)}</span>${e.ct?`<span class="small muted">· ${esc(e.ct)}</span>`:''}<span class="spacer"></span>
+      <button class="btn small ghost" data-edit="${e.id}">Edit</button><button class="btn small ghost" data-del="${e.id}">Delete</button></div>
+      <div style="margin-top:4px"><span class="muted">MT:</span> “${esc(e.span)}” ${e.fix?`<span class="muted">→</span> <b>“${esc(e.fix)}”</b>`:''}</div>
+      <div class="small muted">${esc(e.why)}</div>
+    </div>`).join('') : '';
+  $('errList').querySelectorAll('[data-edit]').forEach(b => b.addEventListener('click', () => editErr(+b.dataset.edit)));
+  $('errList').querySelectorAll('[data-del]').forEach(b => b.addEventListener('click', () => delErr(+b.dataset.del)));
+}
+function markNoErrors(){
+  if(segErrors(cur).filter(e => e.sev!=='Source').length){ $('errMsg').textContent = 'This segment already has errors. Delete them first if the segment is correct.'; return; }
+  S.segs[cur].reviewed = true;
+  save();
+  if(cur < FS.segments.length-1) showSeg(cur+1); else { renderSegList(); go(2); }
+}
+function onPeInput(noSave){
+  S.segs[cur].pe = $('peBox').value;
+  const d = editDistance(FS.segments[cur][2], S.segs[cur].pe);
+  $('editDist').textContent = d.changed ? `Edit distance: ${d.pct}% (${d.edits} word edits)` : 'No edits yet';
+  if(noSave !== true) { S.segs[cur].reviewed = S.segs[cur].reviewed || d.changed; }
+}
+
+/* word-level Levenshtein → TER-style % */
+function tokens(s){ return String(s).trim().split(/\s+/).filter(Boolean); }
+function countWords(s){ return tokens(s).length; }
+function editDistance(a, b){
+  const x = tokens(a), y = tokens(b);
+  const m = x.length, n = y.length;
+  let prev = Array.from({length:n+1}, (_,j) => j);
+  for(let i=1;i<=m;i++){
+    const row = [i];
+    for(let j=1;j<=n;j++){ row[j] = Math.min(prev[j]+1, row[j-1]+1, prev[j-1] + (x[i-1]===y[j-1]?0:1)); }
+    prev = row;
+  }
+  const edits = prev[n];
+  return { edits, pct: m ? Math.round(edits / m * 1000)/10 : 0, changed: String(a).trim() !== String(b).trim() };
+}
+
+/* ==================== POST-EDITING & CHANGE LOG ==================== */
+function peRequired(){ return computeSummary().score < CONFIG.FULL_PE_THRESHOLD; }
+function renderPE(){
+  const m = computeSummary(), full = m.score < CONFIG.FULL_PE_THRESHOLD;
+  $('gate').className = 'gate ' + (full ? 'full' : 'light');
+  $('gate').innerHTML = `<div><span class="small muted">MT quality score</span><br><b class="big">${m.score}</b></div>
+    <div style="flex:1;min-width:240px">${full
+      ? `<b>Full post-editing required</b> (score below ${CONFIG.FULL_PE_THRESHOLD}). Paste your complete, publishable Spanish version and explain every change in the change log.`
+      : `<b>Score of ${CONFIG.FULL_PE_THRESHOLD} or above.</b> Light post-editing is acceptable: fix the errors you logged. The full version is optional; the change log is still required for every segment you changed.`}
+      <div class="small muted" style="margin-top:4px">${m.cnt.Critical} critical · ${m.cnt.Major} major · ${m.cnt.Minor} minor · ${m.words} source words. The score updates as you add or remove errors.</div></div>`;
+  $('fullPeTitle').textContent = full ? 'Full post-editing (score < ' + CONFIG.FULL_PE_THRESHOLD + ')' : 'Full post-edited version (optional)';
+  $('fullPeHelp').textContent = full ? 'Paste the final Spanish text from your Word file, or click “Fill from my segment edits” and finish it here. It must match the file you submit with Track Changes.' : 'You may paste your complete version if you produced one.';
+  $('fullPe').value = S.fullPe || '';
+  updPeCount();
+  renderLog();
+}
+function updPeCount(){ S.fullPe = $('fullPe').value; $('fullPeCount').textContent = countWords(S.fullPe) + ' words'; }
+function changedSegs(){ return FS.segments.map((s,i) => i).filter(i => String(S.segs[i].pe).trim() !== String(FS.segments[i][2]).trim()); }
+function defaultReason(i){ return segErrors(i).map(e => e.why).filter(Boolean).join(' '); }
+function renderLog(){
+  const rows = changedSegs();
+  let h = rows.map(i => {
+    if(S.log[i] == null || S.log[i] === '') S.log[i] = defaultReason(i);
+    return `<tr><td><b>${i+1}</b><br><span class="small muted">${esc(FS.segments[i][0])}</span></td><td class="mt" lang="es">${esc(FS.segments[i][2])}</td><td class="ed" lang="es">${esc(S.segs[i].pe)}</td>
+      <td><textarea data-log="${i}" placeholder="Why was this change necessary?">${esc(S.log[i])}</textarea></td></tr>`;
+  }).join('');
+  h += S.extraLog.map((x,k) => `<tr><td><input type="text" data-xlog="${k}" data-f="line" value="${esc(x.line)}"></td><td><textarea lang="es" data-xlog="${k}" data-f="mt">${esc(x.mt)}</textarea></td>
+      <td><textarea lang="es" data-xlog="${k}" data-f="ed">${esc(x.ed)}</textarea></td><td><textarea data-xlog="${k}" data-f="why">${esc(x.why)}</textarea><button class="btn small ghost" data-delx="${k}">Remove row</button></td></tr>`).join('');
+  $('logTable').querySelector('tbody').innerHTML = h || '<tr><td colspan="4" class="muted small">You have not changed any segments yet. Edit segments in Step 2, or add rows for changes made in Word.</td></tr>';
+  $('logTable').querySelectorAll('[data-delx]').forEach(b => b.addEventListener('click', () => { collectForms(); S.extraLog.splice(+b.dataset.delx,1); renderLog(); save(); }));
+  const missing = logMissing();
+  $('logCount').textContent = `${rows.length + S.extraLog.length} change(s) logged` + (missing ? ` · ${missing} without a reason` : '');
+}
+function logMissing(){ return changedSegs().filter(i => !String(S.log[i]||'').trim()).length + S.extraLog.filter(x => !String(x.why).trim()).length; }
+function changeLog(){
+  return changedSegs().map(i => ({ line: String(i+1) + ' · ' + FS.segments[i][0], mt: FS.segments[i][2], edited: S.segs[i].pe, reason: S.log[i] || defaultReason(i) }))
+    .concat(S.extraLog.map(x => ({ line:x.line, mt:x.mt, edited:x.ed, reason:x.why })));
+}
+
+/* ==================== AI REVIEW ==================== */
+function renderAI(){
+  const done = S.ai.filter(a => a.decision).length;
+  $('aiProgress').textContent = `${done} of ${FS.aiReview.length} items evaluated.`;
+  $('aiItems').innerHTML = FS.aiReview.map((a,k) => {
+    const st = S.ai[k];
+    const opt = v => `<label class="${st.decision===v?'on':''}"><input type="radio" name="ai${k}" value="${v}" ${st.decision===v?'checked':''}>${v}</label>`;
+    return `<div class="ai-item">
+      <div class="row"><span class="pill" style="color:var(--muted)">${esc(a.group)}</span><h3 style="margin:0">${k+1}. ${esc(a.title)}</h3><span class="spacer"></span>
+      <span class="small muted">Segments: ${a.seg.map(n => `<a href="#" data-jump="${n}">${n}</a>`).join(', ')}</span></div>
+      <div class="small" style="margin-top:6px"><b>Current / source:</b> ${esc(a.current)}</div>
+      <div class="sugg" lang="es">${esc(a.suggestion)}</div>
+      <div class="small muted">${esc(a.why)}</div>
+      <div class="choice">${opt('Accept')}${opt('Modify')}${opt('Reject')}${opt('Partly applies')}</div>
+      <div class="grid2">
+        <div><label class="small">Your reasoning</label><textarea data-ai="${k}" data-f="comment" style="min-height:56px">${esc(st.comment)}</textarea></div>
+        <div class="${st.decision==='Modify'||st.decision==='Partly applies'?'':'hidden'}" id="aiv${k}"><label class="small">Your version <small>(Spanish)</small></label><textarea lang="es" data-ai="${k}" data-f="version" style="min-height:56px">${esc(st.version)}</textarea></div>
+      </div></div>`;
+  }).join('');
+  $('aiItems').querySelectorAll('input[type=radio]').forEach(r => r.addEventListener('change', () => {
+    const k = +r.name.slice(2); collectForms(); S.ai[k].decision = r.value; save(); renderAI();
+  }));
+  $('aiItems').querySelectorAll('[data-jump]').forEach(a => a.addEventListener('click', ev => { ev.preventDefault(); cur = +a.dataset.jump - 1; go(1); }));
+}
+
+/* ==================== MATERIALS & TIME ==================== */
+function renderMats(){
+  const types = ['Figure','Table','Graphic / image','Logo','Link / URL','Caption','Other'];
+  $('matTable').querySelector('tbody').innerHTML = S.mats.length ? S.mats.map((m,k) => `<tr>
+    <td><select data-mat="${k}" data-f="type">${types.map(t => `<option ${m.type===t?'selected':''}>${t}</option>`).join('')}</select></td>
+    <td><input type="text" data-mat="${k}" data-f="loc" value="${esc(m.loc)}" placeholder="e.g., Figure 1, p. 1"></td>
+    <td><textarea data-mat="${k}" data-f="what" style="min-height:44px">${esc(m.what)}</textarea></td>
+    <td><textarea data-mat="${k}" data-f="need" style="min-height:44px">${esc(m.need)}</textarea></td>
+    <td><button class="btn small ghost" data-delmat="${k}" title="Remove">✕</button></td></tr>`).join('') : '<tr><td colspan="5" class="muted small">No items yet.</td></tr>';
+  $('noMat').checked = !!S.noMat;
+  $('matTable').querySelectorAll('[data-delmat]').forEach(b => b.addEventListener('click', () => { collectForms(); S.mats.splice(+b.dataset.delmat,1); renderMats(); save(); }));
+}
+function renderTime(){
+  $('timeTable').querySelector('tbody').innerHTML = TIME_ACTS.map((a,k) => `<tr><td>${esc(a)}</td>
+    <td><input type="number" min="0" step="1" data-time="${k}" data-f="min" value="${esc(S.time[k].min)}"></td>
+    <td><input type="text" data-time="${k}" data-f="note" value="${esc(S.time[k].note)}"></td></tr>`).join('');
+  $('timeTable').querySelectorAll('input[data-time]').forEach(i => i.addEventListener('input', updTimeTotal));
+  updTimeTotal();
+}
+function timeTotal(){ return S.time.reduce((n,t) => n + (parseFloat(t.min)||0), 0); }
+function updTimeTotal(){
+  collectForms();
+  $('timeTotal').textContent = timeTotal() + ' min';
+  $('timeAuto').textContent = `For reference: active time measured in this tool so far is ${Math.round(S.activeSec/60)} min.`;
+}
+
+/* gather values from any rendered form controls into state */
+function collectForms(){
+  if(!S) return;
+  document.querySelectorAll('[data-ai]').forEach(el => { S.ai[+el.dataset.ai][el.dataset.f] = el.value; });
+  document.querySelectorAll('[data-mat]').forEach(el => { if(S.mats[+el.dataset.mat]) S.mats[+el.dataset.mat][el.dataset.f] = el.value; });
+  document.querySelectorAll('[data-time]').forEach(el => { S.time[+el.dataset.time][el.dataset.f] = el.value; });
+  document.querySelectorAll('[data-log]').forEach(el => { S.log[+el.dataset.log] = el.value; });
+  document.querySelectorAll('[data-xlog]').forEach(el => { if(S.extraLog[+el.dataset.xlog]) S.extraLog[+el.dataset.xlog][el.dataset.f] = el.value; });
+  if(!$('step2').classList.contains('hidden')) S.fullPe = $('fullPe').value;
+  ['aQuality','aAudience','aRecurring','aFormatting','aQueries','aReflection','tcLink'].forEach(id => { if($(id)) S.a[id] = $(id).value; });
+  ['cTC','cNum','cOwn'].forEach(id => { if($(id)) S.a[id] = $(id).checked; });
+  if($('peBox').dataset.seg === String(cur)) S.segs[cur].pe = $('peBox').value;
+}
+function restoreAssessment(){
+  ['aQuality','aAudience','aRecurring','aFormatting','aQueries','aReflection','tcLink'].forEach(id => { if(S.a[id] != null) $(id).value = S.a[id]; });
+  ['cTC','cNum','cOwn'].forEach(id => { $(id).checked = !!S.a[id]; });
+}
+
+/* ==================== SUMMARY ==================== */
+function computeSummary(){
+  const words = FS.segments.reduce((n,s) => n + countWords(s[1]), 0);
+  const cnt = {Critical:0, Major:0, Minor:0, Preferential:0, Source:0};
+  S.errors.forEach(e => cnt[e.sev]++);
+  const penalty = Object.keys(cnt).reduce((n,k) => n + cnt[k]*CONFIG.WEIGHTS[k], 0);
+  const score = Math.max(0, Math.round((100 - penalty / words * 100) * 10) / 10);
+  let mtW = 0, ed = 0, edited = 0;
+  FS.segments.forEach((s,i) => { const d = editDistance(s[2], S.segs[i].pe); mtW += countWords(s[2]); ed += d.edits; if(d.changed) edited++; });
+  const reviewed = S.segs.filter((s,i) => s.reviewed || segErrors(i).length).length;
+  const byCat = {};
+  S.errors.forEach(e => { byCat[e.cat] = byCat[e.cat] || {Critical:0,Major:0,Minor:0,Preferential:0,Source:0,total:0}; byCat[e.cat][e.sev]++; byCat[e.cat].total++; });
+  const ai = {Accept:0, Modify:0, Reject:0, 'Partly applies':0, '':0};
+  S.ai.forEach(a => ai[a.decision]++);
+  return { words, cnt, penalty, score, editPct: mtW ? Math.round(ed/mtW*1000)/10 : 0, edited, reviewed, total: FS.segments.length, byCat, ai, minutesLogged: timeTotal(), activeMin: Math.round(S.activeSec/60) };
+}
+function renderSummary(restore){
+  if(restore) restoreAssessment();
+  const m = computeSummary();
+  const stat = (v,l) => `<div class="stat"><b>${v}</b><span>${l}</span></div>`;
+  $('statGrid').innerHTML = stat(S.errors.filter(e=>e.sev!=='Source').length, 'MT errors') + stat(m.cnt.Critical, 'critical') + stat(m.cnt.Major, 'major') + stat(m.cnt.Source, 'source issues') + stat(m.editPct + '%', 'post-edit distance') + stat(m.score, 'MT quality score*');
+  const cats = Object.keys(m.byCat);
+  $('catTable').innerHTML = (cats.length ? '<table><tr><th>Focus area</th><th>Critical</th><th>Major</th><th>Minor</th><th>Preferential</th><th>Source</th><th>Total</th></tr>' +
+    cats.map(c => { const r = m.byCat[c]; return `<tr><td>${esc(c)}</td><td>${r.Critical}</td><td>${r.Major}</td><td>${r.Minor}</td><td>${r.Preferential}</td><td>${r.Source}</td><td><b>${r.total}</b></td></tr>`; }).join('') + '</table>' : '<p class="muted">No errors recorded yet.</p>') +
+    `<p class="small muted" style="margin-top:8px">*MQM-style score: 100 − (penalty points ÷ ${m.words} source words × 100). Points: Critical 25, Major 5, Minor 1; preferential changes and source issues count 0. Post-edit distance is the share of MT words you changed (TER-style). Segments edited: ${m.edited}/${m.total}. Time logged: ${m.minutesLogged} min.</p>`;
+  const un = m.total - m.reviewed;
+  const aiLeft = m.ai[''];
+  const warn = [];
+  if(un) warn.push(`${un} segment(s) are not marked as reviewed`);
+  if(aiLeft) warn.push(`${aiLeft} ChatGPT review item(s) are not evaluated`);
+  if(!m.minutesLogged) warn.push('your time log is empty');
+  if(m.score < CONFIG.FULL_PE_THRESHOLD && !String(S.fullPe).trim()) warn.push(`the score is below ${CONFIG.FULL_PE_THRESHOLD}, so the full post-edited version is required (Step 3)`);
+  if(logMissing()) warn.push(`${logMissing()} change-log row(s) have no reason (Step 3)`);
+  if(!S.mats.length && !S.noMat) warn.push('the missing-materials section is blank (add items or tick “No missing materials found”)');
+  $('unreviewedNote').classList.toggle('hidden', !warn.length);
+  $('unreviewedNote').textContent = warn.length ? 'Before submitting: ' + warn.join('; ') + '.' : '';
+}
+
+/* ==================== SUBMIT ==================== */
+function buildPayload(){
+  collectForms();
+  const st = studentInfo(), m = computeSummary();
+  return {
+    token: CONFIG.SUBMIT_TOKEN,
+    submittedAt: new Date().toISOString(),
+    startedAt: S.startedAt,
+    student: Object.assign({}, st, { peLevel: m.score < CONFIG.FULL_PE_THRESHOLD ? 'Full (score < ' + CONFIG.FULL_PE_THRESHOLD + ')' : 'Light (score ≥ ' + CONFIG.FULL_PE_THRESHOLD + ')' }),
+    factSheet: { id: FS.id, title: FS.title, mtEngine: FS.mtEngine, segments: FS.segments.length, words: m.words },
+    summary: { mtErrors: S.errors.filter(e=>e.sev!=='Source').length, critical: m.cnt.Critical, major: m.cnt.Major, minor: m.cnt.Minor, preferential: m.cnt.Preferential, sourceIssues: m.cnt.Source,
+      penalty: m.penalty, mqmScore: m.score, editDistancePct: m.editPct, segmentsEdited: m.edited, segmentsReviewed: m.reviewed,
+      aiAccept: m.ai.Accept, aiModify: m.ai.Modify, aiReject: m.ai.Reject, aiPartly: m.ai['Partly applies'], minutesLogged: m.minutesLogged, activeMinutesInTool: m.activeMin },
+    assessment: { quality: S.a.aQuality||'', audience: S.a.aAudience||'', recurring: S.a.aRecurring||'', formatting: S.a.aFormatting||'', queries: S.a.aQueries||'', reflection: S.a.aReflection||'', trackChangesLink: S.a.tcLink||'', noMissingMaterials: !!S.noMat },
+    errors: S.errors.map(e => ({ seg:e.seg, section:FS.segments[e.seg-1][0], source:FS.segments[e.seg-1][1], mt:FS.segments[e.seg-1][2], focusArea:e.cat, errorType:e.sub, correctionType:e.ct||'', severity:e.sev==='Source'?'Source issue':e.sev, span:e.span, correction:e.fix, justification:e.why })),
+    segments: FS.segments.map((s,i) => { const d = editDistance(s[2], S.segs[i].pe); return { seg:i+1, section:s[0], source:s[1], mt:s[2], postEdit:S.segs[i].pe, editDistancePct:d.pct, wordEdits:d.edits, errors:segErrors(i).length, seconds:S.segs[i].sec, reviewed:!!(S.segs[i].reviewed||segErrors(i).length) }; }),
+    aiReview: FS.aiReview.map((a,k) => ({ item:k+1, title:a.title, segments:a.seg.join(', '), suggestion:a.suggestion, decision:S.ai[k].decision, reasoning:S.ai[k].comment, studentVersion:S.ai[k].version })),
+    materials: S.mats.map(x => ({ type:x.type, location:x.loc, issue:x.what, request:x.need })),
+    fullPostEdit: S.fullPe || '',
+    changeLog: changeLog(),
+    timeLog: TIME_ACTS.map((a,k) => ({ activity:a, minutes: parseFloat(S.time[k].min)||0, note:S.time[k].note }))
+  };
+}
+function submit(){
+  collectForms();
+  renderSummary(false);
+  const msg = $('submitMsg');
+  const p = buildPayload();
+  const miss = [];
+  if(!p.assessment.quality) miss.push('overall quality rating');
+  if(!p.assessment.recurring.trim()) miss.push('recurring issues');
+  if(!/^https?:\/\//.test(p.assessment.trackChangesLink)) miss.push('link to your Track Changes file');
+  if(!S.a.cTC || !S.a.cNum || !S.a.cOwn) miss.push('the three confirmation checkboxes');
+  if(!p.summary.minutesLogged) miss.push('time log');
+  if(p.summary.mqmScore < CONFIG.FULL_PE_THRESHOLD && !p.fullPostEdit.trim()) miss.push('full post-edited version (required because the score is below ' + CONFIG.FULL_PE_THRESHOLD + ')');
+  if(logMissing()) miss.push('a reason for every change-log row');
+  if(miss.length){ msg.innerHTML = `<div class="notice err">Please complete: ${esc(miss.join(', '))}.</div>`; return; }
+  if(CONFIG.SCRIPT_URL.indexOf('script.google.com') === -1){
+    msg.innerHTML = '<div class="notice warn">The project sheet is not connected yet (instructor setup). Download your report as CSV and send it to your instructor.</div>'; return;
+  }
+  $('submitBtn').disabled = true;
+  msg.innerHTML = '<div class="notice info">Sending…</div>';
+  fetch(CONFIG.SCRIPT_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify(p) })
+    .then(() => {
+      S.submitted = true; save();
+      msg.innerHTML = `<div class="notice ok"><b>Submitted.</b> Your review of ${esc(FS.id)} was sent to the project sheet on ${new Date().toLocaleString()}. Keep the CSV as your receipt.</div>`;
+      downloadCSV();
+    })
+    .catch(err => { msg.innerHTML = `<div class="notice err">Could not reach the project sheet (${esc(err.message)}). Your draft is saved on this device. Check your connection and try again, or download the CSV and send it to your instructor.</div>`; })
+    .finally(() => { $('submitBtn').disabled = false; });
+}
+function csvCell(v){ v = String(v == null ? '' : v); return /[",\n]/.test(v) ? '"' + v.replace(/"/g,'""') + '"' : v; }
+function downloadCSV(){
+  const p = buildPayload();
+  const rows = [['MTPE & QA Review', p.factSheet.id, p.factSheet.title],['Student', p.student.name, p.student.id, p.student.email, p.student.course],['Submitted', p.submittedAt],[],
+    ['ERRORS'],['Seg','Section','Focus area','Error type','Severity','Correction type','MT text','Correction','Justification']];
+  p.errors.forEach(e => rows.push([e.seg,e.section,e.focusArea,e.errorType,e.severity,e.correctionType,e.span,e.correction,e.justification]));
+  rows.push([],['POST-EDITING CHANGE LOG'],['Segment-Line','Original MT','Edited Version','Reason for Change']);
+  p.changeLog.forEach(c => rows.push([c.line,c.mt,c.edited,c.reason]));
+  rows.push([],['FULL POST-EDITED VERSION'],[p.fullPostEdit]);
+  rows.push([],['POST-EDITED SEGMENTS'],['Seg','Source','MT','Post-edit','Edit distance %']);
+  p.segments.forEach(s => rows.push([s.seg,s.source,s.mt,s.postEdit,s.editDistancePct]));
+  rows.push([],['CHATGPT REVIEW'],['Item','Title','Decision','Reasoning','Your version']);
+  p.aiReview.forEach(a => rows.push([a.item,a.title,a.decision,a.reasoning,a.studentVersion]));
+  rows.push([],['MISSING MATERIALS'],['Type','Location','Issue','Request']);
+  p.materials.forEach(x => rows.push([x.type,x.location,x.issue,x.request]));
+  rows.push([],['TIME LOG'],['Activity','Minutes','Note']);
+  p.timeLog.forEach(t => rows.push([t.activity,t.minutes,t.note]));
+  rows.push(['Total', p.summary.minutesLogged]);
+  rows.push([],['ASSESSMENT'],['Quality',p.assessment.quality],['Audience',p.assessment.audience],['Recurring issues',p.assessment.recurring],['Formatting needs',p.assessment.formatting],['Queries',p.assessment.queries],['Reflection',p.assessment.reflection],['Track Changes file',p.assessment.trackChangesLink]);
+  const csv = '﻿' + rows.map(r => r.map(csvCell).join(',')).join('\r\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv;charset=utf-8'}));
+  a.download = `${p.factSheet.id}_${(p.student.name||'student').replace(/\s+/g,'_')}_MTPE_review.csv`;
+  document.body.appendChild(a); a.click(); a.remove();
+}
+function copyPE(){
+  collectForms();
+  const txt = S.segs.map(s => s.pe).join('\n\n');
+  const done = () => { $('submitMsg').innerHTML = '<div class="notice ok small">Post-edited Spanish copied, one segment per paragraph.</div>'; };
+  if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(done).catch(() => fallbackCopy(txt, done)); }
+  else fallbackCopy(txt, done);
+}
+function fallbackCopy(txt, done){ const t = document.createElement('textarea'); t.value = txt; document.body.appendChild(t); t.select(); try{ document.execCommand('copy'); done(); }catch(e){} t.remove(); }
+
+init();
+</script>
+</body>
+</html>
